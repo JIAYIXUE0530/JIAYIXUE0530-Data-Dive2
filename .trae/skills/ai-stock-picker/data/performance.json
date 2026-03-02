@@ -1,0 +1,64 @@
+{
+  "metadata": {
+    "created": "2026-03-02",
+    "version": "1.0",
+    "description": "AI Stock Picker - Performance Tracking"
+  },
+  "performance_metrics": {
+    "total_predictions": 10,
+    "bullish_predictions": 5,
+    "bearish_predictions": 5,
+    "bullish_accuracy": 0,
+    "bearish_accuracy": 0,
+    "overall_accuracy": 0,
+    "avg_confidence": 7.4,
+    "high_confidence_predictions": 4,
+    "tracking_period_start": "2026-03-02"
+  },
+  "tracking_data": [
+    {
+      "date": "2026-03-02",
+      "prediction_id": "20260302_001",
+      "bullish_count": 5,
+      "bearish_count": 5,
+      "avg_bullish_confidence": 7.2,
+      "avg_bearish_confidence": 7.8,
+      "high_confidence_calls": [
+        {
+          "sector": "Semiconductors",
+          "direction": "bearish",
+          "confidence": 9,
+          "etf": "SOXX/SMH"
+        },
+        {
+          "sector": "Aerospace & Defense",
+          "direction": "bullish",
+          "confidence": 8,
+          "etf": "XAR/ITA"
+        },
+        {
+          "sector": "Rare Earth & Strategic Metals",
+          "direction": "bullish",
+          "confidence": 8,
+          "etf": "REMX"
+        },
+        {
+          "sector": "Utilities",
+          "direction": "bearish",
+          "confidence": 8,
+          "etf": "XLU"
+        }
+      ],
+      "market_condition": "cautiously_bearish",
+      "vix": 19.86,
+      "status": "pending_validation",
+      "validation_date": "2026-03-09"
+    }
+  ],
+  "notes": [
+    "First prediction recorded on 2026-03-02",
+    "High confidence threshold: >= 8",
+    "Validation period: 1 week",
+    "Market conditions: Triple whammy (PPI inflation, credit crisis, geopolitical risks)"
+  ]
+}

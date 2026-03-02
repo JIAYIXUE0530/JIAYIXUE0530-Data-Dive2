@@ -1,0 +1,96 @@
+{
+  "template_name": "销售日报模板",
+  "version": "1.0",
+  "description": "企业内部销售日报工作流模板",
+  
+  "data_requirements": {
+    "required_columns": ["竞品", "学段", "链路", "商品", "销量", "销售日期"],
+    "date_column": "销售日期"
+  },
+  
+  "kpi_metrics": [
+    {
+      "name": "总销量",
+      "type": "sum",
+      "field": "销量",
+      "format": "number"
+    },
+    {
+      "name": "环比变化",
+      "type": "mom_growth",
+      "field": "销量",
+      "format": "percent"
+    },
+    {
+      "name": "TOP品牌",
+      "type": "top_n",
+      "field": "竞品",
+      "value_field": "销量",
+      "n": 3,
+      "format": "list"
+    },
+    {
+      "name": "平均单价",
+      "type": "avg",
+      "field": "价格",
+      "format": "currency"
+    }
+  ],
+  
+  "chart_configs": [
+    {
+      "id": "trend_by_channel_segment",
+      "title": "分链路分学段品牌月度销量",
+      "type": "grid",
+      "rows": ["中价", "低价", "正价"],
+      "cols": ["小学", "初中", "高中"],
+      "chart_type": "line",
+      "x_axis": "月份",
+      "y_axis": "销量",
+      "series": "竞品",
+      "total_charts": 9
+    }
+  ],
+  
+  "table_configs": [
+    {
+      "id": "product_detail",
+      "title": "商品颗粒度数据",
+      "type": "interactive_table",
+      "columns": ["竞品", "学段", "链路", "学科", "商品", "价格", "月度销量"],
+      "filters": [
+        {"field": "竞品", "label": "选择品牌", "type": "dropdown"},
+        {"field": "学段", "label": "选择学段", "type": "dropdown"},
+        {"field": "链路", "label": "选择链路", "type": "dropdown"}
+      ],
+      "default_sort": {"field": "销量", "order": "desc"}
+    }
+  ],
+  
+  "alerts": {
+    "enabled": true,
+    "rules": [
+      {
+        "name": "销量骤降预警",
+        "condition": "mom_change < -0.3",
+        "message": "销量环比下降超过30%",
+        "level": "high"
+      },
+      {
+        "name": "异常峰值预警",
+        "condition": "value > avg * 3",
+        "message": "销量异常高于平均水平3倍",
+        "level": "medium"
+      }
+    ]
+  },
+  
+  "recommendations": {
+    "enabled": true,
+    "templates": [
+      "基于{top_brand}在{top_segment}学段的强势表现，建议加大该领域投入",
+      "{declining_brand}销量下滑明显，需分析原因并制定应对策略",
+      "{growth_channel}链路增长潜力大，可考虑资源倾斜"
+    ]
+  }
+}

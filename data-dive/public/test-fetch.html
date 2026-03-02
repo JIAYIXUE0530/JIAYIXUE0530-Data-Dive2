@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Fetch</title>
+</head>
+<body>
+  <h1>Testing Report Fetch</h1>
+  <div id="output">Loading...</div>
+  <script>
+    async function test() {
+      const out = document.getElementById('output')
+      try {
+        out.innerHTML = 'Starting fetch...<br>'
+        const url = 'http://localhost:5173/outputs/reports/report-2026-02-28-daily-dashboard.json'
+        out.innerHTML += `URL: ${url}<br>`
+        
+        const response = await fetch(url)
+        out.innerHTML += `Status: ${response.status}<br>`
+        out.innerHTML += `OK: ${response.ok}<br>`
+        
+        if (response.ok) {
+          const data = await response.json()
+          out.innerHTML += `Title: ${data.meta.title}<br>`
+          out.innerHTML += `Total: ${data.summary.total_conclusions}<br>`
+        } else {
+          out.innerHTML += `Error: ${response.statusText}<br>`
+        }
+      } catch (err) {
+        out.innerHTML += `Exception: ${err.message}<br>`
+      }
+    }
+    test()
+  </script>
+</body>
+</html>

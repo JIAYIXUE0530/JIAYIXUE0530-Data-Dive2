@@ -1,0 +1,246 @@
+{
+  "metadata": {
+    "created": "2026-03-02",
+    "version": "1.0",
+    "description": "AI Stock Picker - Historical Recommendations"
+  },
+  "recommendations": [
+    {
+      "date": "2026-03-02",
+      "timestamp": "2026-03-02T00:00:00Z",
+      "market_condition": "cautiously_bearish",
+      "market_indicators": {
+        "vix": 19.86,
+        "vix_change": "+1.23",
+        "spy_trend": "downtrend",
+        "market_breadth": "negative",
+        "spy_monthly_change": "-major",
+        "dow_change": "-1%"
+      },
+      "recommendations": {
+        "bullish": [
+          {
+            "rank": 1,
+            "sector": "航空航天与国防",
+            "etf": "XAR/ITA",
+            "confidence": 8,
+            "reasons": [
+              "商业航天进入密集发射周期，ETF连续5日上涨",
+              "太空算力成为新增长点，星载AI芯片迭代加速",
+              "地缘政治风险上升，国防预算预期增加",
+              "ETF份额创新高，资金持续流入"
+            ],
+            "risks": [
+              "估值已有所抬升",
+              "发射失败风险"
+            ],
+            "key_levels": {
+              "support": "前期突破位",
+              "resistance": "历史高点"
+            }
+          },
+          {
+            "rank": 2,
+            "sector": "医疗保健",
+            "etf": "XLV",
+            "confidence": 7,
+            "reasons": [
+              "减肥药市场爆发式增长，礼来权重15%受益明显",
+              "防御性属性在市场动荡期表现稳健",
+              "估值相对合理，盈利增长确定性高",
+              "老龄化趋势长期支撑"
+            ],
+            "risks": [
+              "政策监管风险",
+              "专利悬崖压力"
+            ],
+            "key_levels": {
+              "support": "200日均线",
+              "resistance": "近期高点"
+            }
+          },
+          {
+            "rank": 3,
+            "sector": "稀土与战略金属",
+            "etf": "REMX",
+            "confidence": 8,
+            "reasons": [
+              "2026年初强势突破历史高点",
+              "资源与安全主线受聪明资金追捧",
+              "新能源、军工需求持续增长",
+              "供应链安全战略价值提升"
+            ],
+            "risks": [
+              "中国政策调控",
+              "替代技术突破"
+            ],
+            "key_levels": {
+              "support": "突破位",
+              "resistance": "历史高点"
+            }
+          },
+          {
+            "rank": 4,
+            "sector": "能源/油气",
+            "etf": "XLE",
+            "confidence": 6,
+            "reasons": [
+              "油气ETF年初表现强劲",
+              "地缘政治风险溢价支撑",
+              "估值处于历史低位",
+              "分红收益率吸引"
+            ],
+            "risks": [
+              "2026年油价可能跌至谷底（供应过剩）",
+              "新能源替代加速"
+            ],
+            "key_levels": {
+              "support": "近期低点",
+              "resistance": "50日均线"
+            }
+          },
+          {
+            "rank": 5,
+            "sector": "基础设施/工业",
+            "etf": "XLI",
+            "confidence": 7,
+            "reasons": [
+              "政策支持基建投资",
+              "供应链重构带来资本开支需求",
+              "估值合理，盈利增长稳定",
+              "经济复苏预期支撑"
+            ],
+            "risks": [
+              "利率上升压力",
+              "经济衰退风险"
+            ],
+            "key_levels": {
+              "support": "200日均线",
+              "resistance": "近期高点"
+            }
+          }
+        ],
+        "bearish": [
+          {
+            "rank": 1,
+            "sector": "半导体",
+            "etf": "SOXX/SMH",
+            "confidence": 9,
+            "reasons": [
+              "NVIDIA财报超预期但股价暴跌5.46%，明显的利好出尽信号",
+              "AMD因业绩展望疲弱重挫17.31%",
+              "费城半导体指数被拖累下跌",
+              "估值处于历史高位，获利回吐压力大",
+              "AI芯片竞争加剧"
+            ],
+            "potential_catalysts": [
+              "新的AI应用爆发",
+              "降息周期开启"
+            ],
+            "key_levels": {
+              "support": "200日均线",
+              "resistance": "近期高点"
+            }
+          },
+          {
+            "rank": 2,
+            "sector": "传统科技",
+            "etf": "XLK",
+            "confidence": 7,
+            "reasons": [
+              "IBM暴跌13%，传统IT服务面临AI威胁",
+              "市场对高估值科技股风险偏好下降",
+              "通胀升温压制成长股估值",
+              "资金从成长股轮动至价值股"
+            ],
+            "potential_catalysts": [
+              "AI应用带来新增长点",
+              "成本削减超预期"
+            ],
+            "key_levels": {
+              "support": "200日均线",
+              "resistance": "50日均线"
+            }
+          },
+          {
+            "rank": 3,
+            "sector": "公用事业",
+            "etf": "XLU",
+            "confidence": 8,
+            "reasons": [
+              "利率上升环境压制高股息板块",
+              "需求增长疲软",
+              "监管压力增加",
+              "资金流出明显"
+            ],
+            "potential_catalysts": [
+              "降息周期开启",
+              "基础设施投资"
+            ],
+            "key_levels": {
+              "support": "近期低点",
+              "resistance": "50日均线"
+            }
+          },
+          {
+            "rank": 4,
+            "sector": "房地产",
+            "etf": "XLRE",
+            "confidence": 8,
+            "reasons": [
+              "信贷危机担忧升温",
+              "商业地产风险暴露",
+              "利率敏感度高",
+              "空置率上升压力"
+            ],
+            "potential_catalysts": [
+              "利率下调",
+              "政策支持"
+            ],
+            "key_levels": {
+              "support": "疫情低点",
+              "resistance": "200日均线"
+            }
+          },
+          {
+            "rank": 5,
+            "sector": "可选消费",
+            "etf": "XLY",
+            "confidence": 7,
+            "reasons": [
+              "通胀升温侵蚀消费者购买力",
+              "经济衰退预期增强",
+              "估值偏高",
+              "消费者信心下降"
+            ],
+            "potential_catalysts": [
+              "就业市场强劲",
+              "通胀快速回落"
+            ],
+            "key_levels": {
+              "support": "200日均线",
+              "resistance": "近期高点"
+            }
+          }
+        ]
+      },
+      "market_summary": "市场面临三重打击：PPI通胀升温、信贷危机担忧、美伊地缘政治风险。标普500创下11个月来最大月度跌幅。建议短期保持谨慎立场，关注防御性板块和资源安全主题。高估值成长股面临获利回吐压力。",
+      "key_risks": [
+        "PPI通胀升温可能推迟降息时点",
+        "信贷危机风险需密切关注",
+        "地缘政治（美伊）不确定性"
+      ],
+      "strategy_suggestions": [
+        "增持防御性板块（医疗、必需消费）",
+        "减持高估值成长股（半导体、科技）",
+        "关注资源安全主题（稀土、航天）",
+        "保持现金仓位，等待市场企稳"
+      ],
+      "next_focus": [
+        "本周CPI数据",
+        "美联储官员讲话",
+        "信贷市场动态"
+      ]
+    }
+  ]
+}

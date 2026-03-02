@@ -1,0 +1,355 @@
+{
+  "meta": {
+    "title": "AI选股日报 - 2026-03-02",
+    "generated_at": "2026-03-02T00:00:00Z",
+    "version": "1.0",
+    "report_type": "ai-stock-picker"
+  },
+  "summary": {
+    "overall": "Market facing triple whammy: PPI inflation heating up, credit crisis concerns, and US-Iran geopolitical risks. S&P 500 posted largest monthly decline in 11 months. Short-term cautious stance recommended with focus on defensive sectors and resource security themes. High-valuation growth stocks facing profit-taking pressure.",
+    "total_conclusions": 10,
+    "high_importance_count": 5,
+    "source_files": [],
+    "market_condition": "cautiously_bearish",
+    "vix": 19.86,
+    "bullish_count": 5,
+    "bearish_count": 5,
+    "avg_confidence": 7.5
+  },
+  "conclusions": [
+    {
+      "id": 1,
+      "title": "🔴 看空: Semiconductors (SOXX/SMH)",
+      "description": "置信度: 9/10\n\n• NVIDIA beat earnings but stock plunged 5.46%, clear sell-the-news signal\n• AMD crashed 17.31% on weak guidance\n• Philadelphia Semiconductor Index dragged down\n• Valuations at historical highs with heavy profit-taking pressure\n• Intensifying AI chip competition",
+      "data_support": "风险因素: ",
+      "importance": "high",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "Semiconductors",
+            "data": [
+              9
+            ],
+            "backgroundColor": "rgba(239, 68, 68, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bearish",
+        "etf": "SOXX/SMH",
+        "confidence": 9,
+        "key_levels": {
+          "support": "200dma",
+          "resistance": "recent_high"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "🔴 看空: Traditional Technology (XLK)",
+      "description": "置信度: 7/10\n\n• IBM plunged 13%, traditional IT services facing AI threat\n• Market risk appetite declining for high-valuation tech stocks\n• Rising inflation suppressing growth stock valuations\n• Capital rotation from growth to value stocks",
+      "data_support": "风险因素: ",
+      "importance": "medium",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "Traditional Technology",
+            "data": [
+              7
+            ],
+            "backgroundColor": "rgba(239, 68, 68, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bearish",
+        "etf": "XLK",
+        "confidence": 7,
+        "key_levels": {
+          "support": "200dma",
+          "resistance": "50dma"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "🔴 看空: Utilities (XLU)",
+      "description": "置信度: 8/10\n\n• Rising interest rate environment pressuring high-dividend sectors\n• Weak demand growth\n• Increasing regulatory pressure\n• Significant capital outflows",
+      "data_support": "风险因素: ",
+      "importance": "high",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "Utilities",
+            "data": [
+              8
+            ],
+            "backgroundColor": "rgba(239, 68, 68, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bearish",
+        "etf": "XLU",
+        "confidence": 8,
+        "key_levels": {
+          "support": "recent_low",
+          "resistance": "50dma"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "🔴 看空: Real Estate (XLRE)",
+      "description": "置信度: 8/10\n\n• Credit crisis concerns rising\n• Commercial real estate risks emerging\n• High interest rate sensitivity\n• Rising vacancy rate pressures",
+      "data_support": "风险因素: ",
+      "importance": "high",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "Real Estate",
+            "data": [
+              8
+            ],
+            "backgroundColor": "rgba(239, 68, 68, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bearish",
+        "etf": "XLRE",
+        "confidence": 8,
+        "key_levels": {
+          "support": "covid_low",
+          "resistance": "200dma"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "🔴 看空: Consumer Discretionary (XLY)",
+      "description": "置信度: 7/10\n\n• Rising inflation eroding consumer purchasing power\n• Strengthening economic recession expectations\n• Elevated valuations\n• Declining consumer confidence",
+      "data_support": "风险因素: ",
+      "importance": "medium",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "Consumer Discretionary",
+            "data": [
+              7
+            ],
+            "backgroundColor": "rgba(239, 68, 68, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bearish",
+        "etf": "XLY",
+        "confidence": 7,
+        "key_levels": {
+          "support": "200dma",
+          "resistance": "recent_high"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "title": "🟢 看好: Aerospace & Defense (XAR/ITA)",
+      "description": "置信度: 8/10\n\n• Commercial aerospace entering intensive launch cycle, ETF 5-day winning streak\n• Space computing emerging as new growth driver with AI chip iteration\n• Geopolitical risks rising, defense budget expected to increase\n• ETF shares at record high with sustained capital inflows",
+      "data_support": "风险因素: Valuation already elevated, Launch failure risks",
+      "importance": "high",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "Aerospace & Defense",
+            "data": [
+              8
+            ],
+            "backgroundColor": "rgba(34, 197, 94, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bullish",
+        "etf": "XAR/ITA",
+        "confidence": 8,
+        "key_levels": {
+          "support": "previous_breakout",
+          "resistance": "all_time_high"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "title": "🟢 看好: Healthcare (XLV)",
+      "description": "置信度: 7/10\n\n• Weight loss drug market explosive growth, Eli Lilly 15% weight benefiting\n• Defensive attributes performing well during market volatility\n• Reasonable valuation with high earnings growth certainty\n• Long-term support from aging population trend",
+      "data_support": "风险因素: Policy and regulatory risks, Patent cliff pressure",
+      "importance": "medium",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "Healthcare",
+            "data": [
+              7
+            ],
+            "backgroundColor": "rgba(34, 197, 94, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bullish",
+        "etf": "XLV",
+        "confidence": 7,
+        "key_levels": {
+          "support": "200dma",
+          "resistance": "recent_high"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "title": "🟢 看好: Rare Earth & Strategic Metals (REMX)",
+      "description": "置信度: 8/10\n\n• Strong breakout to historical highs in early 2026\n• Resources & security theme attracting smart money\n• Sustained demand growth from new energy and military\n• Strategic value of supply chain security increasing",
+      "data_support": "风险因素: China policy controls, Substitute technology breakthroughs",
+      "importance": "high",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "Rare Earth & Strategic Metals",
+            "data": [
+              8
+            ],
+            "backgroundColor": "rgba(34, 197, 94, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bullish",
+        "etf": "REMX",
+        "confidence": 8,
+        "key_levels": {
+          "support": "breakout_level",
+          "resistance": "all_time_high"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "title": "🟢 看好: Energy/Oil & Gas (XLE)",
+      "description": "置信度: 6/10\n\n• Oil & gas ETF strong performance early 2026\n• Geopolitical risk premium support\n• Valuation at historical lows\n• Attractive dividend yield",
+      "data_support": "风险因素: Oil prices may bottom in 2026 due to oversupply, Accelerating new energy substitution",
+      "importance": "medium",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "Energy/Oil & Gas",
+            "data": [
+              6
+            ],
+            "backgroundColor": "rgba(34, 197, 94, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bullish",
+        "etf": "XLE",
+        "confidence": 6,
+        "key_levels": {
+          "support": "recent_low",
+          "resistance": "50dma"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "title": "🟢 看好: Industrials/Infrastructure (XLI)",
+      "description": "置信度: 7/10\n\n• Policy support for infrastructure investment\n• Supply chain restructuring driving capex needs\n• Reasonable valuation with stable earnings growth\n• Economic recovery expectations support",
+      "data_support": "风险因素: Rising interest rate pressure, Economic recession risks",
+      "importance": "medium",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "Industrials/Infrastructure",
+            "data": [
+              7
+            ],
+            "backgroundColor": "rgba(34, 197, 94, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bullish",
+        "etf": "XLI",
+        "confidence": 7,
+        "key_levels": {
+          "support": "200dma",
+          "resistance": "recent_high"
+        }
+      }
+    }
+  ],
+  "market_indicators": {
+    "vix": 19.86,
+    "vix_change": "+1.23",
+    "spy_trend": "downtrend",
+    "market_breadth": "negative",
+    "spy_monthly_change": "-major",
+    "dow_change": "-1%"
+  },
+  "key_risks": [
+    "PPI inflation may delay rate cut timeline",
+    "Credit crisis risks need close monitoring",
+    "Geopolitical (US-Iran) uncertainty"
+  ],
+  "strategy_suggestions": [
+    "Increase defensive sector allocation (healthcare, consumer staples)",
+    "Reduce high-valuation growth stocks (semiconductors, tech)",
+    "Focus on resource security themes (rare earth, aerospace)",
+    "Maintain cash position, wait for market stabilization"
+  ],
+  "next_focus": [
+    "This week's CPI data",
+    "Fed officials' speeches",
+    "Credit market dynamics"
+  ]
+}

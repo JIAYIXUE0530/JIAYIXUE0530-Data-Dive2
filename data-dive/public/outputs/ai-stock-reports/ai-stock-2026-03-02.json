@@ -1,0 +1,355 @@
+{
+  "meta": {
+    "title": "AI选股日报 - 2026-03-02",
+    "generated_at": "2026-03-02T00:00:00Z",
+    "version": "1.0",
+    "report_type": "ai-stock-picker"
+  },
+  "summary": {
+    "overall": "市场面临三重打击：PPI通胀升温、信贷危机担忧、美伊地缘政治风险。标普500创下11个月来最大月度跌幅。建议短期保持谨慎立场，关注防御性板块和资源安全主题。高估值成长股面临获利回吐压力。",
+    "total_conclusions": 10,
+    "high_importance_count": 5,
+    "source_files": [],
+    "market_condition": "cautiously_bearish",
+    "vix": 19.86,
+    "bullish_count": 5,
+    "bearish_count": 5,
+    "avg_confidence": 7.5
+  },
+  "conclusions": [
+    {
+      "id": 1,
+      "title": "🔴 看空: 半导体 (SOXX/SMH)",
+      "description": "置信度: 9/10\n\n• NVIDIA财报超预期但股价暴跌5.46%，明显的利好出尽信号\n• AMD因业绩展望疲弱重挫17.31%\n• 费城半导体指数被拖累下跌\n• 估值处于历史高位，获利回吐压力大\n• AI芯片竞争加剧",
+      "data_support": "风险因素: ",
+      "importance": "high",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "半导体",
+            "data": [
+              9
+            ],
+            "backgroundColor": "rgba(239, 68, 68, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bearish",
+        "etf": "SOXX/SMH",
+        "confidence": 9,
+        "key_levels": {
+          "support": "200日均线",
+          "resistance": "近期高点"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "🔴 看空: 传统科技 (XLK)",
+      "description": "置信度: 7/10\n\n• IBM暴跌13%，传统IT服务面临AI威胁\n• 市场对高估值科技股风险偏好下降\n• 通胀升温压制成长股估值\n• 资金从成长股轮动至价值股",
+      "data_support": "风险因素: ",
+      "importance": "medium",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "传统科技",
+            "data": [
+              7
+            ],
+            "backgroundColor": "rgba(239, 68, 68, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bearish",
+        "etf": "XLK",
+        "confidence": 7,
+        "key_levels": {
+          "support": "200日均线",
+          "resistance": "50日均线"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "🔴 看空: 公用事业 (XLU)",
+      "description": "置信度: 8/10\n\n• 利率上升环境压制高股息板块\n• 需求增长疲软\n• 监管压力增加\n• 资金流出明显",
+      "data_support": "风险因素: ",
+      "importance": "high",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "公用事业",
+            "data": [
+              8
+            ],
+            "backgroundColor": "rgba(239, 68, 68, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bearish",
+        "etf": "XLU",
+        "confidence": 8,
+        "key_levels": {
+          "support": "近期低点",
+          "resistance": "50日均线"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "🔴 看空: 房地产 (XLRE)",
+      "description": "置信度: 8/10\n\n• 信贷危机担忧升温\n• 商业地产风险暴露\n• 利率敏感度高\n• 空置率上升压力",
+      "data_support": "风险因素: ",
+      "importance": "high",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "房地产",
+            "data": [
+              8
+            ],
+            "backgroundColor": "rgba(239, 68, 68, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bearish",
+        "etf": "XLRE",
+        "confidence": 8,
+        "key_levels": {
+          "support": "疫情低点",
+          "resistance": "200日均线"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "🔴 看空: 可选消费 (XLY)",
+      "description": "置信度: 7/10\n\n• 通胀升温侵蚀消费者购买力\n• 经济衰退预期增强\n• 估值偏高\n• 消费者信心下降",
+      "data_support": "风险因素: ",
+      "importance": "medium",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "可选消费",
+            "data": [
+              7
+            ],
+            "backgroundColor": "rgba(239, 68, 68, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bearish",
+        "etf": "XLY",
+        "confidence": 7,
+        "key_levels": {
+          "support": "200日均线",
+          "resistance": "近期高点"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "title": "🟢 看好: 航空航天与国防 (XAR/ITA)",
+      "description": "置信度: 8/10\n\n• 商业航天进入密集发射周期，ETF连续5日上涨\n• 太空算力成为新增长点，星载AI芯片迭代加速\n• 地缘政治风险上升，国防预算预期增加\n• ETF份额创新高，资金持续流入",
+      "data_support": "风险因素: 估值已有所抬升, 发射失败风险",
+      "importance": "high",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "航空航天与国防",
+            "data": [
+              8
+            ],
+            "backgroundColor": "rgba(34, 197, 94, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bullish",
+        "etf": "XAR/ITA",
+        "confidence": 8,
+        "key_levels": {
+          "support": "前期突破位",
+          "resistance": "历史高点"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "title": "🟢 看好: 医疗保健 (XLV)",
+      "description": "置信度: 7/10\n\n• 减肥药市场爆发式增长，礼来权重15%受益明显\n• 防御性属性在市场动荡期表现稳健\n• 估值相对合理，盈利增长确定性高\n• 老龄化趋势长期支撑",
+      "data_support": "风险因素: 政策监管风险, 专利悬崖压力",
+      "importance": "medium",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "医疗保健",
+            "data": [
+              7
+            ],
+            "backgroundColor": "rgba(34, 197, 94, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bullish",
+        "etf": "XLV",
+        "confidence": 7,
+        "key_levels": {
+          "support": "200日均线",
+          "resistance": "近期高点"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "title": "🟢 看好: 稀土与战略金属 (REMX)",
+      "description": "置信度: 8/10\n\n• 2026年初强势突破历史高点\n• 资源与安全主线受聪明资金追捧\n• 新能源、军工需求持续增长\n• 供应链安全战略价值提升",
+      "data_support": "风险因素: 中国政策调控, 替代技术突破",
+      "importance": "high",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "稀土与战略金属",
+            "data": [
+              8
+            ],
+            "backgroundColor": "rgba(34, 197, 94, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bullish",
+        "etf": "REMX",
+        "confidence": 8,
+        "key_levels": {
+          "support": "突破位",
+          "resistance": "历史高点"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "title": "🟢 看好: 能源/油气 (XLE)",
+      "description": "置信度: 6/10\n\n• 油气ETF年初表现强劲\n• 地缘政治风险溢价支撑\n• 估值处于历史低位\n• 分红收益率吸引",
+      "data_support": "风险因素: 2026年油价可能跌至谷底（供应过剩）, 新能源替代加速",
+      "importance": "medium",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "能源/油气",
+            "data": [
+              6
+            ],
+            "backgroundColor": "rgba(34, 197, 94, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bullish",
+        "etf": "XLE",
+        "confidence": 6,
+        "key_levels": {
+          "support": "近期低点",
+          "resistance": "50日均线"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "title": "🟢 看好: 基础设施/工业 (XLI)",
+      "description": "置信度: 7/10\n\n• 政策支持基建投资\n• 供应链重构带来资本开支需求\n• 估值合理，盈利增长稳定\n• 经济复苏预期支撑",
+      "data_support": "风险因素: 利率上升压力, 经济衰退风险",
+      "importance": "medium",
+      "chart_type": "bar",
+      "chart_data": {
+        "labels": [
+          "置信度"
+        ],
+        "datasets": [
+          {
+            "label": "基础设施/工业",
+            "data": [
+              7
+            ],
+            "backgroundColor": "rgba(34, 197, 94, 0.8)"
+          }
+        ]
+      },
+      "metadata": {
+        "direction": "bullish",
+        "etf": "XLI",
+        "confidence": 7,
+        "key_levels": {
+          "support": "200日均线",
+          "resistance": "近期高点"
+        }
+      }
+    }
+  ],
+  "market_indicators": {
+    "vix": 19.86,
+    "vix_change": "+1.23",
+    "spy_trend": "downtrend",
+    "market_breadth": "negative",
+    "spy_monthly_change": "-major",
+    "dow_change": "-1%"
+  },
+  "key_risks": [
+    "PPI通胀升温可能推迟降息时点",
+    "信贷危机风险需密切关注",
+    "地缘政治（美伊）不确定性"
+  ],
+  "strategy_suggestions": [
+    "增持防御性板块（医疗、必需消费）",
+    "减持高估值成长股（半导体、科技）",
+    "关注资源安全主题（稀土、航天）",
+    "保持现金仓位，等待市场企稳"
+  ],
+  "next_focus": [
+    "本周CPI数据",
+    "美联储官员讲话",
+    "信贷市场动态"
+  ]
+}
