@@ -1,0 +1,40 @@
+{
+  "reports": [
+    {
+      "id": "report-daily-sales",
+      "title": "销售日报 - 竞品销量分析",
+      "filename": "report-daily-sales.json",
+      "created_at": "2026-03-02T19:06:35.078601",
+      "summary_preview": "基于数据分析，总销量达16,625,854件，环比变化-2.8%。包含9张趋势图表和商品颗粒度数据表格...",
+      "stats": {
+        "total_conclusions": 10,
+        "high_importance": 0,
+        "source_files": 1
+      }
+    },
+    {
+      "id": "report-2025-sales-analysis",
+      "title": "竞品销量数据分析报告",
+      "filename": "report-2025-sales-analysis.json",
+      "created_at": "2026-03-02T10:16:13.087769",
+      "summary_preview": "基于2025年全年竞品销量数据分析，总销量达16,625,854件。作业帮以5,876,737件销量领跑市场...",
+      "stats": {
+        "total_conclusions": 6,
+        "high_importance": 2,
+        "source_files": 1
+      }
+    },
+    {
+      "id": "report-2026-02-28-daily-dashboard",
+      "title": "日报可视化看板分析报告",
+      "filename": "report-2026-02-28-daily-dashboard.json",
+      "created_at": "2026-02-28T12:05:29.127580",
+      "summary_preview": "基于销售数据生成的日报可视化看板，包含链路、学段、品牌维度的月度销量分析。...",
+      "stats": {
+        "total_conclusions": 13,
+        "high_importance": 0,
+        "source_files": 1
+      }
+    }
+  ]
+}

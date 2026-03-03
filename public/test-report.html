@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Report Loading</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4">
+  <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h1 class="text-2xl font-bold mb-4">Test Report Loading</h1>
+    <div id="report-content"></div>
+    <div id="error-message"></div>
+  </div>
+
+  <script>
+    async function loadReport() {
+      const reportContent = document.getElementById('report-content');
+      const errorMessage = document.getElementById('error-message');
+      
+      try {
+        console.log('Fetching report file...');
+        const response = await fetch('/outputs/reports/report-2026-02-28-daily-dashboard.json');
+        console.log('Response status:', response.status);
+        
+        if (response.ok) {
+          console.log('Parsing JSON...');
+          const data = await response.json();
+          console.log('Report data loaded:', data);
+          reportContent.innerHTML = `
+            <h2 class="text-xl font-semibold mb-2">Report Title: ${data.meta.title}</h2>
+            <p class="text-gray-600 mb-4">Summary: ${data.summary.overall}</p>
+            <p class="text-gray-600">Total Conclusions: ${data.summary.total_conclusions}</p>
+          `;
+        } else {
+          errorMessage.innerHTML = `<p class="text-red-600">Failed to load report: ${response.statusText}</p>`;
+        }
+      } catch (err) {
+        console.error('Error:', err);
+        errorMessage.innerHTML = `<p class="text-red-600">Error loading report: ${err.message}</p>`;
+      }
+    }
+
+    // Load report when page loads
+    loadReport();
+  </script>
+</body>
+</html>
