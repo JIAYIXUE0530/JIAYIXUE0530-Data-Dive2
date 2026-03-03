@@ -43,7 +43,7 @@ function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)]">
+    <div className="min-h-screen bg-[var(--bg-primary)] flex flex-col">
       {/* Header */}
       <header className="border-b border-[var(--border-subtle)] sticky top-0 z-50 bg-[var(--bg-primary)]">
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
@@ -52,13 +52,6 @@ function Dashboard() {
               <h1 className="font-display text-xl text-[var(--text-primary)]">Data Dive</h1>
             </div>
             <div className="flex items-center gap-6">
-              <a 
-                href="/ai-stock" 
-                className="opacity-0 animate-fade-in-up font-mono text-xs text-[var(--accent)] hover:underline"
-                style={{ animationDelay: '0.1s' }}
-              >
-                🤖 AI选股看板
-              </a>
               <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
                 <span className="font-mono text-xs text-[var(--text-muted)]">{reports.length} 份报告</span>
               </div>
@@ -67,7 +60,7 @@ function Dashboard() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 lg:px-8 py-12 lg:py-16">
+      <main className="flex-1 max-w-6xl mx-auto px-6 lg:px-8 py-12 lg:py-16">
         {reports.length > 0 ? (
           <>
             <div className="mb-12 opacity-0 animate-fade-in-up">
