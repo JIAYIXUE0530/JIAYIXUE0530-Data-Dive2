@@ -1,38 +1,98 @@
 {
   "reports": [
     {
-      "id": "report-daily-sales",
-      "title": "销售日报 - 竞品销量分析",
-      "filename": "report-daily-sales.json",
-      "created_at": "2026-03-02T19:06:35.078601",
-      "summary_preview": "基于数据分析，总销量达16,625,854件，环比变化-2.8%。包含9张趋势图表和商品颗粒度数据表格...",
+      "id": "report-2025-10-31",
+      "title": "2025-10-31竞品日报",
+      "filename": "report-2025-10-31.json",
+      "created_at": "2025-10-31T23:59:59.000000",
+      "summary_preview": "截止2025-10-31，累计销量达14,078,620件（1408万单），环比变化-15.0%。TOP3品牌：作业帮, IP, 猿辅导...",
       "stats": {
-        "total_conclusions": 10,
-        "high_importance": 0,
+        "total_conclusions": 4,
+        "high_importance": 4,
         "source_files": 1
       }
     },
     {
-      "id": "report-2025-sales-analysis",
-      "title": "竞品销量数据分析报告",
-      "filename": "report-2025-sales-analysis.json",
-      "created_at": "2026-03-02T10:16:13.087769",
-      "summary_preview": "基于2025年全年竞品销量数据分析，总销量达16,625,854件。作业帮以5,876,737件销量领跑市场...",
+      "id": "report-2025-11-28",
+      "title": "2025-11-28竞品日报",
+      "filename": "report-2025-11-28.json",
+      "created_at": "2025-11-28T23:59:59.000000",
+      "summary_preview": "截止2025-11-28，累计销量达15,315,152件（1532万单），环比变化-9.8%。TOP3品牌：作业帮, IP, 猿辅导...",
       "stats": {
-        "total_conclusions": 6,
-        "high_importance": 2,
+        "total_conclusions": 4,
+        "high_importance": 4,
         "source_files": 1
       }
     },
     {
-      "id": "report-2026-02-28-daily-dashboard",
-      "title": "日报可视化看板分析报告",
-      "filename": "report-2026-02-28-daily-dashboard.json",
-      "created_at": "2026-02-28T12:05:29.127580",
-      "summary_preview": "基于销售数据生成的日报可视化看板，包含链路、学段、品牌维度的月度销量分析。...",
+      "id": "report-2025-12-18",
+      "title": "2025-12-18竞品日报",
+      "filename": "report-2025-12-18.json",
+      "created_at": "2025-12-18T23:59:59.000000",
+      "summary_preview": "截止2025-12-18，累计销量达16,145,403件（1615万单），环比变化-40.0%。TOP3品牌：作业帮, IP, 猿辅导...",
       "stats": {
-        "total_conclusions": 13,
-        "high_importance": 0,
+        "total_conclusions": 4,
+        "high_importance": 4,
+        "source_files": 1
+      }
+    },
+    {
+      "id": "report-2025-12-31",
+      "title": "2025-12-31竞品日报",
+      "filename": "report-2025-12-31.json",
+      "created_at": "2025-12-31T23:59:59.000000",
+      "summary_preview": "截止2025-12-31，累计销量达16,625,854件（1663万单），环比变化-2.8%。TOP3品牌：作业帮, IP, 猿辅导...",
+      "stats": {
+        "total_conclusions": 4,
+        "high_importance": 4,
+        "source_files": 1
+      }
+    },
+    {
+      "id": "report-2026-01-10",
+      "title": "2026-01-10竞品日报",
+      "filename": "report-2026-01-10.json",
+      "created_at": "2026-01-10T23:59:59.000000",
+      "summary_preview": "截止2026-01-10的竞品销量分析报告...",
+      "stats": {
+        "total_conclusions": 4,
+        "high_importance": 4,
+        "source_files": 1
+      }
+    },
+    {
+      "id": "report-2026-02-05",
+      "title": "2026-02-05竞品日报",
+      "filename": "report-2026-02-05.json",
+      "created_at": "2026-02-05T23:59:59.000000",
+      "summary_preview": "截止2026-02-05的竞品销量分析报告...",
+      "stats": {
+        "total_conclusions": 4,
+        "high_importance": 4,
+        "source_files": 1
+      }
+    },
+    {
+      "id": "report-2026-02-09",
+      "title": "2026-02-09竞品日报",
+      "filename": "report-2026-02-09.json",
+      "created_at": "2026-02-09T23:59:59.000000",
+      "summary_preview": "截止2026-02-09，累计销量达2,187,371件（219万单），环比变化-71.2%。",
+      "stats": {
+        "total_conclusions": 4,
+        "high_importance": 4,
+        "source_files": 1
+      }
+    },
+    {
+      "id": "report-2026-02-10",
+      "title": "2026-02-10竞品日报",
+      "filename": "report-2026-02-10.json",
+      "created_at": "2026-02-10T23:59:59.000000",
+      "summary_preview": "截止2026-02-10的竞品销量分析报告...",
+      "stats": {
+        "total_conclusions": 4,
+        "high_importance": 4,
         "source_files": 1
       }
     }

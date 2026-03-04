@@ -1,19 +1,7 @@
 #!/usr/bin/env python3
 """
-竞品日报生成模板
-使用方法: python3 scripts/generate_daily_report.py YYYY-MM-DD
-
-示例:
-    python3 scripts/generate_daily_report.py 2025-10-31
-    python3 scripts/generate_daily_report.py 2025-11-28
-    python3 scripts/generate_daily_report.py 2025-12-18
-
-功能说明:
-1. 锚点日期作为参数，昨日销量 = 锚点日期前一天
-2. 日均计算：销量小于5的天不计入销售日
-3. 周计算：使用日历周，T周 = 锚点日期所在周的上一周（周一到周日）
-4. 学段排序：小学、初中、高中、低幼
-5. 品牌排序：作业帮、猿辅导、高途、希望学、豆神、叫叫、其他竞品、IP最后
+生成2025-11-28竞品日报
+以2025-11-28为锚点，生成该日期的日报
 """
 
 import pandas as pd
@@ -21,12 +9,9 @@ import json
 from datetime import datetime, timedelta
 from pathlib import Path
 import numpy as np
-import sys
+import calendar
 
-# ==================== 固定配置 ====================
-SEGMENT_ORDER = {'小学': 0, '初中': 1, '高中': 2, '低幼': 3}
-BRAND_ORDER = {'作业帮': 0, '猿辅导': 1, '高途': 2, '希望学': 3, '豆神': 4, '叫叫': 5, 'IP': 999}
-SALES_THRESHOLD = 5  # 日均计算时，销量小于此值的天不计入销售日
+ANCHOR_DATE = datetime(2025, 11, 28)
 
 def get_week_range(anchor_date):
     """
@@ -73,7 +58,7 @@ def calculate_spu_daily_report(df, channel, perspective, anchor_date):
         return {"columns": [], "header_groups": [], "data": []}
     
     max_date = anchor_date
-    yesterday = max_date - timedelta(days=1)  # 昨日 = 锚点日期前一天
+    yesterday = max_date - timedelta(days=1)
     last_3_days_start = yesterday - timedelta(days=2)
     last_7_days_start = yesterday - timedelta(days=6)
     last_30_days_start = yesterday - timedelta(days=29)
@@ -103,8 +88,7 @@ def calculate_spu_daily_report(df, channel, perspective, anchor_date):
         mask = (df_group['销售日期'] >= start_date) & (df_group['销售日期'] <= end_date)
         return df_group[mask]['销量'].sum()
     
-    def calc_daily_avg_with_threshold(df_group, start_date, end_date, threshold=SALES_THRESHOLD):
-        """计算日均销量，销量小于threshold的天不计入销售日"""
+    def calc_daily_avg_with_threshold(df_group, start_date, end_date, threshold=5):
         mask = (df_group['销售日期'] >= start_date) & (df_group['销售日期'] <= end_date)
         df_period = df_group[mask]
         daily_sales = df_period.groupby('销售日期')['销量'].sum()
@@ -201,18 +185,20 @@ def calculate_spu_daily_report(df, channel, perspective, anchor_date):
         
         spu_data.append(record)
     
-    # 使用固定排序顺序
+    segment_order = {'小学': 0, '初中': 1, '高中': 2, '低幼': 3}
+    brand_order = {'作业帮': 0, '猿辅导': 1, '高途': 2, '希望学': 3, '豆神': 4, '叫叫': 5, 'IP': 999}
+    
     if perspective == '品牌':
         spu_data.sort(key=lambda x: (
-            SEGMENT_ORDER.get(x['学段'], 999),
-            BRAND_ORDER.get(x['竞品'], 500),
+            segment_order.get(x['学段'], 999),
+            brand_order.get(x['竞品'], 500),
             -x['昨日销量']
         ))
     else:
         spu_data.sort(key=lambda x: (
-            SEGMENT_ORDER.get(x['学段'], 999),
+            segment_order.get(x['学段'], 999),
             x.get('学科', ''),
-            BRAND_ORDER.get(x['竞品'], 500),
+            brand_order.get(x['竞品'], 500),
             -x['昨日销量']
         ))
     
@@ -568,8 +554,6 @@ def generate_report(file_path, anchor_date, output_path=None):
     df = pd.read_excel(file_path)
     print(f"数据加载完成，共{len(df)}条记录")
     
-    df['销售日期'] = pd.to_datetime(df['销售日期'])
-    
     df = df[df['销售日期'] <= anchor_date]
     print(f"筛选后数据：{len(df)}条记录（截止{anchor_date.strftime('%Y-%m-%d')}）")
     
@@ -702,18 +686,16 @@ def generate_report(file_path, anchor_date, output_path=None):
     print("生成日报总体结论...")
     daily_summary = generate_daily_summary(df, anchor_date)
     
-    date_str = anchor_date.strftime('%Y-%m-%d')
-    
     report = {
         "meta": {
-            "title": f"{date_str}竞品日报",
+            "title": "2025-11-28竞品日报",
             "generated_at": datetime.now().isoformat(),
-            "version": "3.0",
+            "version": "2.3",
             "report_type": "daily_sales_with_spu",
-            "anchor_date": date_str
+            "anchor_date": anchor_date.strftime('%Y-%m-%d')
         },
         "summary": {
-            "overall": f"截止{date_str}，累计销量达{total_sales:,}件（{total_sales/10000:.0f}万单），环比变化{mom_change:+.1f}%。TOP3品牌：{', '.join(top_brands)}。",
+            "overall": f"截止2025年11月28日，累计销量达{total_sales:,}件（{total_sales/10000:.0f}万单），环比变化{mom_change:+.1f}%。TOP3品牌：{', '.join(top_brands)}。",
             "total_conclusions": len(charts) + len(spu_reports),
             "high_importance_count": len([c for c in charts if c.get('importance') == 'high']) + len(spu_reports),
             "source_files": [Path(file_path).name]
@@ -725,7 +707,7 @@ def generate_report(file_path, anchor_date, output_path=None):
     }
     
     if output_path is None:
-        output_path = f'outputs/reports/report-{date_str}.json'
+        output_path = 'outputs/reports/report-2025-11-28.json'
     
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
@@ -734,33 +716,9 @@ def generate_report(file_path, anchor_date, output_path=None):
     print(f"报告已保存至: {output_path}")
     return report
 
-def main():
-    if len(sys.argv) < 2:
-        print("使用方法: python3 scripts/generate_daily_report.py YYYY-MM-DD")
-        print("示例: python3 scripts/generate_daily_report.py 2025-10-31")
-        sys.exit(1)
-    
-    try:
-        anchor_date = datetime.strptime(sys.argv[1], '%Y-%m-%d')
-    except ValueError:
-        print("日期格式错误，请使用 YYYY-MM-DD 格式")
-        sys.exit(1)
-    
-    uploads_dir = Path('uploads')
-    xlsx_files = list(uploads_dir.glob('*.xlsx'))
-    if not xlsx_files:
-        print("错误: uploads目录中没有找到数据文件")
-        sys.exit(1)
-    
-    file_path = max(xlsx_files, key=lambda f: f.stat().st_mtime)
-    print(f"正在使用数据文件: {file_path}")
-    
-    report = generate_report(str(file_path), anchor_date)
-    
+if __name__ == "__main__":
+    file_path = 'uploads/竞品销量数据_数据库标准格式.xlsx'
+    report = generate_report(file_path, ANCHOR_DATE)
     print(f"\n报告生成完成！")
-    print(f"- 锚点日期: {anchor_date.strftime('%Y-%m-%d')}")
     print(f"- 累计销量: {report['kpi']['total_sales']:,}件")
     print(f"- 环比变化: {report['kpi']['mom_change']:+.1f}%")
-
-if __name__ == "__main__":
-    main()

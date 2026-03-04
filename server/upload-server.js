@@ -4,7 +4,10 @@ import path from 'path'
 import fs from 'fs'
 import XLSX from 'xlsx'
 import { fileURLToPath } from 'url'
+import { exec } from 'child_process'
+import { promisify } from 'util'
 
+const execAsync = promisify(exec)
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
@@ -56,6 +59,9 @@ app.use((req, res, next) => {
   }
   next()
 })
+
+// 解析 JSON 请求体
+app.use(express.json())
 
 // 获取最新数据文件
 function getLatestFile() {
@@ -221,6 +227,118 @@ app.get('/api/database/options', (req, res) => {
     res.status(500).json({ error: err.message })
   }
 })
+
+// 生成竞品日报
+app.post('/api/generate-report', async (req, res) => {
+  try {
+    const { date } = req.body
+    
+    if (!date) {
+      return res.status(400).json({ error: '请提供日期参数' })
+    }
+    
+    // 验证日期格式
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/
+    if (!dateRegex.test(date)) {
+      return res.status(400).json({ error: '日期格式错误，请使用 YYYY-MM-DD 格式' })
+    }
+    
+    // 检查数据文件是否存在
+    const latestFile = getLatestFile()
+    if (!latestFile) {
+      return res.status(400).json({ error: '没有找到数据文件，请先上传数据' })
+    }
+    
+    console.log(`开始生成报告: ${date}`)
+    
+    // 执行Python脚本生成报告
+    const scriptPath = path.join(__dirname, '..', 'scripts', 'generate_daily_report.py')
+    const { stdout, stderr } = await execAsync(`python3 "${scriptPath}" ${date}`, {
+      cwd: path.join(__dirname, '..'),
+      timeout: 120000 // 2分钟超时
+    })
+    
+    if (stderr && !stderr.includes('报告生成完成')) {
+      console.error('Script stderr:', stderr)
+    }
+    
+    console.log('Script output:', stdout)
+    
+    // 复制报告到public目录
+    const reportPath = path.join(__dirname, '..', 'outputs', 'reports', `report-${date}.json`)
+    const publicReportPath = path.join(__dirname, '..', 'public', 'outputs', 'reports', `report-${date}.json`)
+    
+    if (fs.existsSync(reportPath)) {
+      // 确保目标目录存在
+      const publicReportsDir = path.dirname(publicReportPath)
+      if (!fs.existsSync(publicReportsDir)) {
+        fs.mkdirSync(publicReportsDir, { recursive: true })
+      }
+      fs.copyFileSync(reportPath, publicReportPath)
+      
+      // 更新索引文件
+      await updateReportsIndex(date)
+      
+      res.json({ 
+        success: true,
+        message: `成功生成 ${date} 竞品日报`,
+        reportId: `report-${date}`
+      })
+    } else {
+      res.status(500).json({ error: '报告生成失败，请检查日志' })
+    }
+    
+  } catch (err) {
+    console.error('Generate report error:', err)
+    res.status(500).json({ error: err.message || '生成报告时出错' })
+  }
+})
+
+// 更新报告索引
+async function updateReportsIndex(newDate) {
+  const indexPath = path.join(__dirname, '..', 'public', 'outputs', 'reports', 'reports-index.json')
+  const outputIndexPath = path.join(__dirname, '..', 'outputs', 'reports', 'reports-index.json')
+  
+  let indexData = { reports: [] }
+  
+  // 读取现有索引
+  if (fs.existsSync(indexPath)) {
+    const content = fs.readFileSync(indexPath, 'utf-8')
+    indexData = JSON.parse(content)
+  }
+  
+  // 检查是否已存在该日期的报告
+  const existingIndex = indexData.reports.findIndex(r => r.id === `report-${newDate}`)
+  
+  const newReport = {
+    id: `report-${newDate}`,
+    title: `${newDate}竞品日报`,
+    filename: `report-${newDate}.json`,
+    created_at: `${newDate}T23:59:59.000000`,
+    summary_preview: `截止${newDate}的竞品销量分析报告...`,
+    stats: {
+      total_conclusions: 4,
+      high_importance: 4,
+      source_files: 1
+    }
+  }
+  
+  if (existingIndex >= 0) {
+    indexData.reports[existingIndex] = newReport
+  } else {
+    // 按日期排序插入
+    indexData.reports.push(newReport)
+    indexData.reports.sort((a, b) => {
+      const dateA = a.id.replace('report-', '').replace('report-daily-sales', '2025-12-31')
+      const dateB = b.id.replace('report-', '').replace('report-daily-sales', '2025-12-31')
+      return dateA.localeCompare(dateB)
+    })
+  }
+  
+  // 保存索引
+  fs.writeFileSync(indexPath, JSON.stringify(indexData, null, 2))
+  fs.writeFileSync(outputIndexPath, JSON.stringify(indexData, null, 2))
+}
 
 app.listen(PORT, () => {
   console.log(`Data upload server running on port ${PORT}`)

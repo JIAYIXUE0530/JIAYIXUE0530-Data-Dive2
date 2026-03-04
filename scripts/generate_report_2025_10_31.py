@@ -1,19 +1,7 @@
 #!/usr/bin/env python3
 """
-竞品日报生成模板
-使用方法: python3 scripts/generate_daily_report.py YYYY-MM-DD
-
-示例:
-    python3 scripts/generate_daily_report.py 2025-10-31
-    python3 scripts/generate_daily_report.py 2025-11-28
-    python3 scripts/generate_daily_report.py 2025-12-18
-
-功能说明:
-1. 锚点日期作为参数，昨日销量 = 锚点日期前一天
-2. 日均计算：销量小于5的天不计入销售日
-3. 周计算：使用日历周，T周 = 锚点日期所在周的上一周（周一到周日）
-4. 学段排序：小学、初中、高中、低幼
-5. 品牌排序：作业帮、猿辅导、高途、希望学、豆神、叫叫、其他竞品、IP最后
+生成2025-10-31竞品日报
+以2025-10-31为锚点，生成该日期的日报
 """
 
 import pandas as pd
@@ -21,33 +9,37 @@ import json
 from datetime import datetime, timedelta
 from pathlib import Path
 import numpy as np
-import sys
+import calendar
 
-# ==================== 固定配置 ====================
-SEGMENT_ORDER = {'小学': 0, '初中': 1, '高中': 2, '低幼': 3}
-BRAND_ORDER = {'作业帮': 0, '猿辅导': 1, '高途': 2, '希望学': 3, '豆神': 4, '叫叫': 5, 'IP': 999}
-SALES_THRESHOLD = 5  # 日均计算时，销量小于此值的天不计入销售日
+ANCHOR_DATE = datetime(2025, 10, 31)
 
 def get_week_range(anchor_date):
     """
     根据锚点日期计算T周、T-1周等日期范围
     T周 = 锚点日期所在周的上一周（完整自然周，周一到周日）
+    例如：2025-10-31是周五，T周 = 10-20(周一) 到 10-26(周日)
     """
+    # 获取锚点日期所在周的周一（weekday()返回0-6，0是周一）
     current_weekday = anchor_date.weekday()
     current_week_monday = anchor_date - timedelta(days=current_weekday)
     
-    t_week_end = current_week_monday - timedelta(days=1)
-    t_week_start = current_week_monday - timedelta(days=7)
+    # T周 = 上一周（周一到周日）
+    t_week_end = current_week_monday - timedelta(days=1)  # 上周日
+    t_week_start = current_week_monday - timedelta(days=7)  # 上周一
     
+    # T-1周
     t1_week_end = t_week_start - timedelta(days=1)
     t1_week_start = t_week_start - timedelta(days=7)
     
+    # T-2周
     t2_week_end = t1_week_start - timedelta(days=1)
     t2_week_start = t1_week_start - timedelta(days=7)
     
+    # T-3周
     t3_week_end = t2_week_start - timedelta(days=1)
     t3_week_start = t2_week_start - timedelta(days=7)
     
+    # T-4周
     t4_week_end = t3_week_start - timedelta(days=1)
     t4_week_start = t3_week_start - timedelta(days=7)
     
@@ -74,10 +66,11 @@ def calculate_spu_daily_report(df, channel, perspective, anchor_date):
     
     max_date = anchor_date
     yesterday = max_date - timedelta(days=1)  # 昨日 = 锚点日期前一天
-    last_3_days_start = yesterday - timedelta(days=2)
-    last_7_days_start = yesterday - timedelta(days=6)
-    last_30_days_start = yesterday - timedelta(days=29)
+    last_3_days_start = yesterday - timedelta(days=2)  # 昨日往前推2天，共3天
+    last_7_days_start = yesterday - timedelta(days=6)  # 昨日往前推6天，共7天
+    last_30_days_start = yesterday - timedelta(days=29)  # 昨日往前推29天，共30天
     
+    # 使用日历周计算
     week_ranges = get_week_range(anchor_date)
     t_week_start = week_ranges['t_week_start']
     t_week_end = week_ranges['t_week_end']
@@ -103,13 +96,21 @@ def calculate_spu_daily_report(df, channel, perspective, anchor_date):
         mask = (df_group['销售日期'] >= start_date) & (df_group['销售日期'] <= end_date)
         return df_group[mask]['销量'].sum()
     
-    def calc_daily_avg_with_threshold(df_group, start_date, end_date, threshold=SALES_THRESHOLD):
-        """计算日均销量，销量小于threshold的天不计入销售日"""
+    def calc_daily_avg_with_threshold(df_group, start_date, end_date, threshold=5):
+        """
+        计算日均销量，销量小于threshold的天不计入销售日
+        返回 (日均销量, 有效销售天数)
+        """
         mask = (df_group['销售日期'] >= start_date) & (df_group['销售日期'] <= end_date)
         df_period = df_group[mask]
+        
+        # 按日期汇总销量
         daily_sales = df_period.groupby('销售日期')['销量'].sum()
+        
+        # 只统计销量>=threshold的天数
         valid_days = (daily_sales >= threshold).sum()
         total_sales = daily_sales.sum()
+        
         if valid_days > 0:
             return total_sales / valid_days, valid_days
         return 0, 0
@@ -120,6 +121,8 @@ def calculate_spu_daily_report(df, channel, perspective, anchor_date):
     for seg in df_channel['学段'].unique():
         seg_df = df_channel[df_channel['学段'] == seg]
         yesterday_total = calc_period_sales(seg_df, yesterday, yesterday)
+        
+        # 计算学段在各时间段内的实际总销量（用于占比计算）
         total_3d_sales = calc_period_sales(seg_df, last_3_days_start, yesterday)
         total_7d_sales = calc_period_sales(seg_df, last_7_days_start, yesterday)
         total_30d_sales = calc_period_sales(seg_df, last_30_days_start, yesterday)
@@ -139,19 +142,24 @@ def calculate_spu_daily_report(df, channel, perspective, anchor_date):
             segment, subject, brand, product, price = group_keys
         
         yesterday_sales = calc_period_sales(group_df, yesterday, yesterday)
+        
+        # 计算该商品在各时间段内的总销量
         total_3d_sales = calc_period_sales(group_df, last_3_days_start, yesterday)
         total_7d_sales = calc_period_sales(group_df, last_7_days_start, yesterday)
         total_30d_sales = calc_period_sales(group_df, last_30_days_start, yesterday)
         
+        # 计算日均（销量小于5的天不计入）
         avg_3d, valid_3d = calc_daily_avg_with_threshold(group_df, last_3_days_start, yesterday)
         avg_7d, valid_7d = calc_daily_avg_with_threshold(group_df, last_7_days_start, yesterday)
         avg_30d, valid_30d = calc_daily_avg_with_threshold(group_df, last_30_days_start, yesterday)
         
         seg_totals = segment_totals.get(segment, {})
         
+        # 昨日占比
         yesterday_total = seg_totals.get('昨日', 0)
         yesterday_ratio = (yesterday_sales / yesterday_total * 100) if yesterday_total > 0 else 0
         
+        # 各时间段占比（用实际总销量计算）
         seg_total_3d = seg_totals.get('3日总销量', 0)
         ratio_3d = (total_3d_sales / seg_total_3d * 100) if seg_total_3d > 0 else 0
         
@@ -201,18 +209,20 @@ def calculate_spu_daily_report(df, channel, perspective, anchor_date):
         
         spu_data.append(record)
     
-    # 使用固定排序顺序
+    segment_order = {'小学': 0, '初中': 1, '高中': 2, '低幼': 3}
+    brand_order = {'作业帮': 0, '猿辅导': 1, '高途': 2, '希望学': 3, '豆神': 4, '叫叫': 5, 'IP': 999}
+    
     if perspective == '品牌':
         spu_data.sort(key=lambda x: (
-            SEGMENT_ORDER.get(x['学段'], 999),
-            BRAND_ORDER.get(x['竞品'], 500),
+            segment_order.get(x['学段'], 999),
+            brand_order.get(x['竞品'], 500),
             -x['昨日销量']
         ))
     else:
         spu_data.sort(key=lambda x: (
-            SEGMENT_ORDER.get(x['学段'], 999),
+            segment_order.get(x['学段'], 999),
             x.get('学科', ''),
-            BRAND_ORDER.get(x['竞品'], 500),
+            brand_order.get(x['竞品'], 500),
             -x['昨日销量']
         ))
     
@@ -262,7 +272,7 @@ def generate_spu_insights(df, channel, perspective, spu_data, anchor_date):
     
     df_channel = df[df['链路'] == channel].copy()
     max_date = anchor_date
-    yesterday = max_date - timedelta(days=1)
+    yesterday = max_date - timedelta(days=1)  # 昨日 = 锚点日期前一天
     
     df_yesterday = df_channel[df_channel['销售日期'] == yesterday]
     yesterday_brand_sales = df_yesterday.groupby('竞品')['销量'].sum().sort_values(ascending=False)
@@ -270,8 +280,6 @@ def generate_spu_insights(df, channel, perspective, spu_data, anchor_date):
     
     brand_sales = df_channel.groupby('竞品')['销量'].sum().sort_values(ascending=False)
     total_channel_sales = brand_sales.sum()
-    
-    date_str = yesterday.strftime('%m月%d日')
     
     if len(brand_sales) > 0:
         top_brand = brand_sales.index[0]
@@ -282,7 +290,7 @@ def generate_spu_insights(df, channel, perspective, spu_data, anchor_date):
             "type": "市场格局",
             "icon": "🏆",
             "title": f"{top_brand}吃了{channel}链路{top_brand_share:.0f}%的市场份额",
-            "content": f"{top_brand}累计销量{int(brand_sales.iloc[0]):,}单，在{channel}链路处于领先地位。{date_str}日销{int(yesterday_top_brand_sales):,}单。",
+            "content": f"{top_brand}累计销量{int(brand_sales.iloc[0]):,}单，在{channel}链路处于领先地位。10月30日日销{int(yesterday_top_brand_sales):,}单。",
             "priority": "high"
         })
         
@@ -292,8 +300,8 @@ def generate_spu_insights(df, channel, perspective, spu_data, anchor_date):
             insights.append({
                 "type": "竞品排名",
                 "icon": "📊",
-                "title": f"{date_str}竞品排名：{top3_yesterday.index[0]} > {top3_yesterday.index[1]} > {top3_yesterday.index[2]}",
-                "content": f"{date_str}{channel}链路竞品排名：{ranking}。{top3_yesterday.index[0]}占据头部位置。",
+                "title": f"10月30日竞品排名：{top3_yesterday.index[0]} > {top3_yesterday.index[1]} > {top3_yesterday.index[2]}",
+                "content": f"10月30日{channel}链路竞品排名：{ranking}。{top3_yesterday.index[0]}占据头部位置。",
                 "priority": "high"
             })
     
@@ -308,8 +316,8 @@ def generate_spu_insights(df, channel, perspective, spu_data, anchor_date):
         insights.append({
             "type": "学段分析",
             "icon": "📚",
-            "title": f"{top_segment}学段领先，{date_str}占比{top_segment_share:.0f}%",
-            "content": f"{date_str}{channel}链路学段排名：{segment_ranking}。{top_segment}学段是主力市场。",
+            "title": f"{top_segment}学段领先，10月30日占比{top_segment_share:.0f}%",
+            "content": f"10月30日{channel}链路学段排名：{segment_ranking}。{top_segment}学段是主力市场。",
             "priority": "high"
         })
     
@@ -367,7 +375,7 @@ def generate_spu_insights(df, channel, perspective, spu_data, anchor_date):
                 "type": "爆品分析",
                 "icon": "🔥",
                 "title": f"{brand}{product_name}为当前爆品",
-                "content": f"{date_str}销量{yesterday_sales:,}单，价格{price}元，是{channel}链路最畅销单品。",
+                "content": f"10月30日销量{yesterday_sales:,}单，价格{price}元，是{channel}链路最畅销单品。",
                 "priority": "high"
             })
     
@@ -433,8 +441,8 @@ def generate_daily_summary(df, anchor_date):
     }
     
     max_date = anchor_date
-    yesterday = max_date - timedelta(days=1)
-    day_before = yesterday - timedelta(days=1)
+    yesterday = max_date - timedelta(days=1)  # 昨日 = 锚点日期前一天
+    day_before = yesterday - timedelta(days=1)  # 前日 = 昨日再前一天
     
     last_3_days_start = yesterday - timedelta(days=2)
     last_7_days_start = yesterday - timedelta(days=6)
@@ -568,14 +576,15 @@ def generate_report(file_path, anchor_date, output_path=None):
     df = pd.read_excel(file_path)
     print(f"数据加载完成，共{len(df)}条记录")
     
-    df['销售日期'] = pd.to_datetime(df['销售日期'])
-    
+    # 筛选数据到锚点日期为止
     df = df[df['销售日期'] <= anchor_date]
     print(f"筛选后数据：{len(df)}条记录（截止{anchor_date.strftime('%Y-%m-%d')}）")
     
+    # 添加月份列
     df['月份'] = df['销售日期'].dt.to_period('M').astype(str)
     all_months = sorted(df['月份'].unique())
     
+    # KPI指标
     print("计算KPI指标...")
     total_sales = df['销量'].sum()
     
@@ -594,6 +603,7 @@ def generate_report(file_path, anchor_date, output_path=None):
         "top_brands": top_brands
     }
     
+    # 趋势图表
     print("生成趋势图表...")
     channels = ['低价', '中价', '正价']
     segments = ['小学', '初中', '高中']
@@ -650,10 +660,12 @@ def generate_report(file_path, anchor_date, output_path=None):
     
     print(f"生成了1张可筛选趋势图表（包含{len(trend_chart_data['combinations'])}种组合）")
     
+    # SPU商品级别日报
     print("生成SPU商品级别日报...")
     
     spu_reports = []
     
+    # 1. 中价-品牌视角
     zhongjia_brand_data = calculate_spu_daily_report(df, '中价', '品牌', anchor_date)
     zhongjia_brand_insights = generate_spu_insights(df, '中价', '品牌', zhongjia_brand_data, anchor_date)
     spu_reports.append({
@@ -668,6 +680,7 @@ def generate_report(file_path, anchor_date, output_path=None):
         "chart_data": zhongjia_brand_data
     })
     
+    # 2. 中价-学科视角
     zhongjia_subject_data = calculate_spu_daily_report(df, '中价', '学科', anchor_date)
     zhongjia_subject_insights = generate_spu_insights(df, '中价', '学科', zhongjia_subject_data, anchor_date)
     spu_reports.append({
@@ -682,6 +695,7 @@ def generate_report(file_path, anchor_date, output_path=None):
         "chart_data": zhongjia_subject_data
     })
     
+    # 3. 低价-品牌视角
     dijia_brand_data = calculate_spu_daily_report(df, '低价', '品牌', anchor_date)
     dijia_brand_insights = generate_spu_insights(df, '低价', '品牌', dijia_brand_data, anchor_date)
     spu_reports.append({
@@ -696,24 +710,24 @@ def generate_report(file_path, anchor_date, output_path=None):
         "chart_data": dijia_brand_data
     })
     
+    # 整体洞察
     print("生成整体洞察...")
     overall_insights = generate_overall_insights(df, anchor_date)
     
+    # 日报总体结论
     print("生成日报总体结论...")
     daily_summary = generate_daily_summary(df, anchor_date)
     
-    date_str = anchor_date.strftime('%Y-%m-%d')
-    
     report = {
         "meta": {
-            "title": f"{date_str}竞品日报",
+            "title": "2025-10-31竞品日报",
             "generated_at": datetime.now().isoformat(),
-            "version": "3.0",
+            "version": "2.3",
             "report_type": "daily_sales_with_spu",
-            "anchor_date": date_str
+            "anchor_date": anchor_date.strftime('%Y-%m-%d')
         },
         "summary": {
-            "overall": f"截止{date_str}，累计销量达{total_sales:,}件（{total_sales/10000:.0f}万单），环比变化{mom_change:+.1f}%。TOP3品牌：{', '.join(top_brands)}。",
+            "overall": f"截止2025年10月31日，累计销量达{total_sales:,}件（{total_sales/10000:.0f}万单），环比变化{mom_change:+.1f}%。TOP3品牌：{', '.join(top_brands)}。",
             "total_conclusions": len(charts) + len(spu_reports),
             "high_importance_count": len([c for c in charts if c.get('importance') == 'high']) + len(spu_reports),
             "source_files": [Path(file_path).name]
@@ -724,8 +738,9 @@ def generate_report(file_path, anchor_date, output_path=None):
         "conclusions": charts + spu_reports
     }
     
+    # 保存报告
     if output_path is None:
-        output_path = f'outputs/reports/report-{date_str}.json'
+        output_path = 'outputs/reports/report-2025-10-31.json'
     
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
@@ -734,33 +749,9 @@ def generate_report(file_path, anchor_date, output_path=None):
     print(f"报告已保存至: {output_path}")
     return report
 
-def main():
-    if len(sys.argv) < 2:
-        print("使用方法: python3 scripts/generate_daily_report.py YYYY-MM-DD")
-        print("示例: python3 scripts/generate_daily_report.py 2025-10-31")
-        sys.exit(1)
-    
-    try:
-        anchor_date = datetime.strptime(sys.argv[1], '%Y-%m-%d')
-    except ValueError:
-        print("日期格式错误，请使用 YYYY-MM-DD 格式")
-        sys.exit(1)
-    
-    uploads_dir = Path('uploads')
-    xlsx_files = list(uploads_dir.glob('*.xlsx'))
-    if not xlsx_files:
-        print("错误: uploads目录中没有找到数据文件")
-        sys.exit(1)
-    
-    file_path = max(xlsx_files, key=lambda f: f.stat().st_mtime)
-    print(f"正在使用数据文件: {file_path}")
-    
-    report = generate_report(str(file_path), anchor_date)
-    
+if __name__ == "__main__":
+    file_path = 'uploads/竞品销量数据_数据库标准格式.xlsx'
+    report = generate_report(file_path, ANCHOR_DATE)
     print(f"\n报告生成完成！")
-    print(f"- 锚点日期: {anchor_date.strftime('%Y-%m-%d')}")
     print(f"- 累计销量: {report['kpi']['total_sales']:,}件")
     print(f"- 环比变化: {report['kpi']['mom_change']:+.1f}%")
-
-if __name__ == "__main__":
-    main()
