@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 function Crawler() {
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
+  const [cookie, setCookie] = useState('')
   const [crawling, setCrawling] = useState(false)
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
@@ -16,6 +17,11 @@ function Crawler() {
   const handleCrawl = async () => {
     if (!startDate) {
       setError('请输入开始日期')
+      return
+    }
+
+    if (!cookie.trim()) {
+      setError('请输入蝉妈妈Cookie')
       return
     }
 
@@ -33,7 +39,8 @@ function Crawler() {
         },
         body: JSON.stringify({
           start_date: startDate,
-          end_date: endDate || startDate
+          end_date: endDate || startDate,
+          cookie: cookie.trim()
         })
       })
 
@@ -63,6 +70,11 @@ function Crawler() {
     setStartDate(dateStr)
     setEndDate(dateStr)
     
+    if (!cookie.trim()) {
+      setError('请先输入蝉妈妈Cookie')
+      return
+    }
+    
     setTimeout(() => {
       handleCrawl()
     }, 100)
@@ -90,10 +102,11 @@ function Crawler() {
             </Link>
             <nav className="flex items-center gap-8">
               <Link to="/reports" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">日报</Link>
+              <Link to="/crawler" className="text-sm text-[var(--accent-forest)]">数据爬取</Link>
+              <Link to="/data-tagging" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">数据打标</Link>
               <Link to="/data-entry" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">每日数据录入</Link>
               <Link to="/sales-data" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">全年销量数据</Link>
               <Link to="/competitor-database" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">竞品数据库</Link>
-              <Link to="/crawler" className="text-sm text-[var(--accent-forest)]">数据爬取</Link>
             </nav>
           </div>
         </div>
@@ -108,6 +121,30 @@ function Crawler() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
+              <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-xl p-6 mb-6">
+                <h3 className="font-display text-lg text-[var(--text-primary)] mb-4">Cookie 配置</h3>
+                <p className="text-sm text-[var(--text-secondary)] mb-4">
+                  请先登录蝉妈妈网站，从浏览器开发者工具中复制Cookie
+                </p>
+                <textarea
+                  value={cookie}
+                  onChange={(e) => setCookie(e.target.value)}
+                  placeholder="粘贴蝉妈妈Cookie..."
+                  rows={3}
+                  className="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-subtle)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-forest)] font-mono"
+                />
+                <div className="mt-3 p-3 bg-[var(--bg-secondary)] rounded-lg text-xs text-[var(--text-muted)]">
+                  <p className="font-medium mb-1">获取Cookie方法：</p>
+                  <ol className="list-decimal list-inside space-y-1">
+                    <li>打开浏览器访问 https://www.chanmama.com 并登录</li>
+                    <li>按F12打开开发者工具</li>
+                    <li>切换到Network标签，刷新页面</li>
+                    <li>找到任意请求，在请求头中找到Cookie字段</li>
+                    <li>复制完整Cookie内容粘贴到上方输入框</li>
+                  </ol>
+                </div>
+              </div>
+
               <div className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-xl p-6">
                 <h3 className="font-display text-lg text-[var(--text-primary)] mb-6">爬取配置</h3>
                 

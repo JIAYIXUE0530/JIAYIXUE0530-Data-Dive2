@@ -2,18 +2,29 @@
 """
 蝉妈妈竞品数据爬虫
 从蝉妈妈平台爬取竞品销量数据，用于生成竞品日报
+
+使用方法:
+1. 手动登录蝉妈妈网站获取cookie
+2. 将cookie保存到 cookie.txt 文件中
+3. 运行爬虫脚本
 """
 import requests
 import json
 import time
-import hashlib
 import base64
 import gzip
 import pandas as pd
+import os
 from datetime import datetime, timedelta
 from pathlib import Path
 from Crypto.Cipher import AES
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional
+
+# 禁用代理
+os.environ['HTTP_PROXY'] = ''
+os.environ['HTTPS_PROXY'] = ''
+os.environ['http_proxy'] = ''
+os.environ['https_proxy'] = ''
 
 BLOCK_SIZE = 16
 pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * chr(BLOCK_SIZE - len(s) % BLOCK_SIZE)
@@ -56,69 +67,48 @@ COMPETITOR_SHOPS = [
 ]
 
 class ChanmamaCrawler:
-    def __init__(self, username: str = "18210790624", password: str = "newcode0402"):
-        self.username = username
-        self.password = password
+    def __init__(self, cookie: str = None):
+        self.cookie = cookie
         self.session = None
         self.headers = None
-        self.login_count = 0
         
-    def login(self) -> Optional[Dict]:
-        """登录蝉妈妈平台"""
-        self.login_count += 1
-        print(f'正在登录账号：{self.username}，第{self.login_count}次尝试')
+    def load_cookie_from_file(self, cookie_file: str = 'cookie.txt') -> Optional[str]:
+        """从文件加载cookie"""
+        cookie_path = Path(__file__).parent.parent / cookie_file
+        if cookie_path.exists():
+            with open(cookie_path, 'r', encoding='utf-8') as f:
+                cookie = f.read().strip()
+                if cookie:
+                    print(f"从 {cookie_file} 加载cookie成功")
+                    return cookie
+        return None
+    
+    def init_session(self, cookie: str = None) -> bool:
+        """使用cookie初始化会话"""
+        if not cookie:
+            cookie = self.cookie or self.load_cookie_from_file()
         
-        try:
-            self.session = requests.Session()
-            self.session.headers = {
-                'referer': 'https://www.chanmama.com/login',
-                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36'
-            }
-            
-            data = {
-                "appid": 10000,
-                "grant_type": "password",
-                "mobile": self.username,
-                "password": hashlib.md5(self.password.encode("utf-8")).hexdigest(),
-                "device": "PC"
-            }
-            
-            resp = self.session.post(
-                url="https://passport.chanmama.com/v2/cas/authorize",
-                json=data,
-                timeout=15
-            )
-            resp_json = resp.json()
-            
-            if resp_json.get('code') != 0:
-                print(f"登录失败: {resp_json.get('msg')}")
-                return None
-            
-            data = {
-                "from_platform": None,
-                "appId": 10000,
-                "timeStamp": resp_json["data"]["expire_time"],
-                "token": resp_json["data"]["token"],
-                "grant_type": "cas"
-            }
-            
-            resp = self.session.post(
-                url="https://api-service.chanmama.com/v1/access/token",
-                json=data,
-                timeout=15
-            )
-            resp_json = resp.json()
-            
-            token = resp_json["data"]["token"]
-            self.session.headers.update({"cookie": f'LOGIN-TOKEN-FORSNS={token}'})
-            self.headers = dict(self.session.headers)
-            
-            print("登录成功!")
-            return self.headers
-            
-        except Exception as e:
-            print(f"登录异常: {e}")
-            return None
+        if not cookie:
+            print("错误: 未提供cookie，请先登录蝉妈妈获取cookie")
+            print("获取cookie方法:")
+            print("1. 打开浏览器访问 https://www.chanmama.com 并登录")
+            print("2. 按F12打开开发者工具")
+            print("3. 切换到Network标签")
+            print("4. 刷新页面，找到任意请求")
+            print("5. 在请求头中找到Cookie字段，复制完整内容")
+            print("6. 将cookie保存到项目根目录的 cookie.txt 文件中")
+            return False
+        
+        self.session = requests.Session()
+        self.session.trust_env = False  # 禁用环境变量中的代理
+        self.session.headers = {
+            'referer': 'https://www.chanmama.com/',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'cookie': cookie
+        }
+        self.headers = dict(self.session.headers)
+        print("会话初始化成功!")
+        return True
     
     def aes_decrypt(self, data: str) -> bytes:
         """AES解密数据"""
@@ -157,10 +147,15 @@ class ChanmamaCrawler:
             )
             
             try:
-                response = self.session.get(url, timeout=15)
+                response = self.session.get(url, timeout=15, proxies={'http': None, 'https': None})
                 resp_json = response.json()
                 
-                if resp_json.get('code') != 0:
+                if resp_json.get('code') == 40100:
+                    print(f"认证失败: cookie可能已过期，请重新获取")
+                    break
+                
+                # code 为 0 或 None 都认为是成功
+                if resp_json.get('code') not in [0, None]:
                     print(f"API错误: {resp_json.get('msg')}")
                     break
                 
@@ -214,8 +209,8 @@ class ChanmamaCrawler:
         shops: Optional[List[Dict]] = None
     ) -> List[Dict]:
         """爬取所有店铺数据"""
-        if not self.headers:
-            if not self.login():
+        if not self.session:
+            if not self.init_session():
                 return []
         
         shops = shops or COMPETITOR_SHOPS
@@ -260,8 +255,7 @@ def run_crawler(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
     output_dir: str = "uploads",
-    username: str = "18210790624",
-    password: str = "newcode0402"
+    cookie: str = None
 ) -> Dict:
     """运行爬虫主函数"""
     if not start_date:
@@ -271,7 +265,17 @@ def run_crawler(
     
     print(f"开始爬取数据: {start_date} ~ {end_date}")
     
-    crawler = ChanmamaCrawler(username, password)
+    crawler = ChanmamaCrawler(cookie=cookie)
+    
+    if not crawler.init_session():
+        return {
+            'success': False,
+            'message': '请先提供有效的cookie。获取方法：登录蝉妈妈网站后，从浏览器开发者工具中复制Cookie',
+            'filepath': '',
+            'count': 0,
+            'date': start_date
+        }
+    
     data = crawler.crawl_all_shops(start_date, end_date)
     
     if data:
@@ -286,7 +290,7 @@ def run_crawler(
     else:
         return {
             'success': False,
-            'message': '爬取失败，未获取到数据',
+            'message': '爬取失败，未获取到数据。请检查cookie是否有效',
             'filepath': '',
             'count': 0,
             'date': start_date

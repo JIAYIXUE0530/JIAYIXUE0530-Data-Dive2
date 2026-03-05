@@ -342,7 +342,7 @@ async function updateReportsIndex(newDate) {
 
 app.post('/api/crawler/run', async (req, res) => {
   try {
-    const { start_date, end_date } = req.body
+    const { start_date, end_date, cookie } = req.body
     
     if (!start_date) {
       return res.status(400).json({ success: false, message: '请提供开始日期' })
@@ -356,9 +356,19 @@ app.post('/api/crawler/run', async (req, res) => {
     console.log(`开始爬取数据: ${start_date} ~ ${end_date || start_date}`)
     
     const scriptPath = path.join(__dirname, '..', 'scripts', 'crawler.py')
-    const command = end_date 
-      ? `python3 "${scriptPath}" ${start_date} ${end_date}`
-      : `python3 "${scriptPath}" ${start_date}`
+    
+    let command
+    if (cookie) {
+      const cookieFile = path.join(__dirname, '..', 'cookie.txt')
+      fs.writeFileSync(cookieFile, cookie, 'utf-8')
+      command = end_date 
+        ? `python3 "${scriptPath}" ${start_date} ${end_date}`
+        : `python3 "${scriptPath}" ${start_date}`
+    } else {
+      command = end_date 
+        ? `python3 "${scriptPath}" ${start_date} ${end_date}`
+        : `python3 "${scriptPath}" ${start_date}`
+    }
     
     const { stdout, stderr } = await execAsync(command, {
       cwd: path.join(__dirname, '..'),
