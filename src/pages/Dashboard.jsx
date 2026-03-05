@@ -15,6 +15,12 @@ function Dashboard() {
       gradient: 'from-[#6b9b8f] to-[#8fc5b5]'
     },
     {
+      title: '数据打标',
+      description: '使用 AI 对商品数据进行智能分类打标',
+      path: '/data-tagging',
+      gradient: 'from-[#a88fbf] to-[#c9b8d9]'
+    },
+    {
       title: '每日数据录入',
       description: '录入每日销量数据，更新数据库',
       path: '/data-entry',
