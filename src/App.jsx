@@ -5,6 +5,7 @@ import Report from './pages/Report'
 import DataEntry from './pages/DataEntry'
 import SalesData from './pages/SalesData'
 import CompetitorDatabase from './pages/CompetitorDatabase'
+import Crawler from './pages/Crawler'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/data-entry" element={<DataEntry />} />
         <Route path="/sales-data" element={<SalesData />} />
         <Route path="/competitor-database" element={<CompetitorDatabase />} />
+        <Route path="/crawler" element={<Crawler />} />
       </Routes>
     </BrowserRouter>
   )

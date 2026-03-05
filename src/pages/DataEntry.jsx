@@ -12,6 +12,7 @@ function DataEntry() {
             </Link>
             <nav className="flex items-center gap-8">
               <Link to="/reports" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">日报</Link>
+              <Link to="/crawler" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">数据爬取</Link>
               <Link to="/data-entry" className="text-sm text-[var(--accent-forest)]">每日数据录入</Link>
               <Link to="/sales-data" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">全年销量数据</Link>
               <Link to="/competitor-database" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">竞品数据库</Link>

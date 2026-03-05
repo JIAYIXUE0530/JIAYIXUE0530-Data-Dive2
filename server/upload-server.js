@@ -340,6 +340,56 @@ async function updateReportsIndex(newDate) {
   fs.writeFileSync(outputIndexPath, JSON.stringify(indexData, null, 2))
 }
 
+app.post('/api/crawler/run', async (req, res) => {
+  try {
+    const { start_date, end_date } = req.body
+    
+    if (!start_date) {
+      return res.status(400).json({ success: false, message: '请提供开始日期' })
+    }
+    
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/
+    if (!dateRegex.test(start_date)) {
+      return res.status(400).json({ success: false, message: '日期格式错误，请使用 YYYY-MM-DD 格式' })
+    }
+    
+    console.log(`开始爬取数据: ${start_date} ~ ${end_date || start_date}`)
+    
+    const scriptPath = path.join(__dirname, '..', 'scripts', 'crawler.py')
+    const command = end_date 
+      ? `python3 "${scriptPath}" ${start_date} ${end_date}`
+      : `python3 "${scriptPath}" ${start_date}`
+    
+    const { stdout, stderr } = await execAsync(command, {
+      cwd: path.join(__dirname, '..'),
+      timeout: 600000
+    })
+    
+    console.log('Crawler output:', stdout)
+    if (stderr) {
+      console.error('Crawler stderr:', stderr)
+    }
+    
+    try {
+      const lastLine = stdout.trim().split('\n').pop()
+      const result = JSON.parse(lastLine)
+      res.json(result)
+    } catch (parseErr) {
+      res.json({
+        success: true,
+        message: '爬取完成',
+        filepath: '',
+        count: 0,
+        date: start_date
+      })
+    }
+    
+  } catch (err) {
+    console.error('Crawler error:', err)
+    res.status(500).json({ success: false, message: err.message || '爬取失败' })
+  }
+})
+
 app.listen(PORT, () => {
   console.log(`Data upload server running on port ${PORT}`)
 })
