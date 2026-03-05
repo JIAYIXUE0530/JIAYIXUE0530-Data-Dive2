@@ -4,11 +4,14 @@
   "framework": "vite",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/((?!api|outputs).*)", "destination": "/index.html" }
+    { "source": "/((?!api|outputs|data).*)", "destination": "/index.html" }
   ],
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs20.x"
+  "headers": [
+    {
+      "source": "/data/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
+      ]
     }
-  }
+  ]
 }
