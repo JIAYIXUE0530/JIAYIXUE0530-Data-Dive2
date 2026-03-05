@@ -73,7 +73,6 @@ class ChanmamaCrawler:
         self.headers = None
         
     def load_cookie_from_file(self, cookie_file: str = 'cookie.txt') -> Optional[str]:
-        """从文件加载cookie"""
         cookie_path = Path(__file__).parent.parent / cookie_file
         if cookie_path.exists():
             with open(cookie_path, 'r', encoding='utf-8') as f:
@@ -84,7 +83,6 @@ class ChanmamaCrawler:
         return None
     
     def init_session(self, cookie: str = None) -> bool:
-        """使用cookie初始化会话"""
         if not cookie:
             cookie = self.cookie or self.load_cookie_from_file()
         
@@ -100,7 +98,7 @@ class ChanmamaCrawler:
             return False
         
         self.session = requests.Session()
-        self.session.trust_env = False  # 禁用环境变量中的代理
+        self.session.trust_env = False
         self.session.headers = {
             'referer': 'https://www.chanmama.com/',
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -111,12 +109,19 @@ class ChanmamaCrawler:
         return True
     
     def aes_decrypt(self, data: str) -> bytes:
-        """AES解密数据"""
         key = JIEMI_KEY.encode('utf8')
         data = base64.b64decode(data)
         cipher = AES.new(key, AES.MODE_ECB)
         text_decrypted = unpad(cipher.decrypt(data))
         return gzip.decompress(text_decrypted)
+    
+    def get_volume_from_trend(self, days_30_volume_trend: List, target_date: str) -> int:
+        if not days_30_volume_trend:
+            return 0
+        for day_data in days_30_volume_trend:
+            if day_data.get('time_node_str') == target_date:
+                return day_data.get('volume', 0)
+        return 0
     
     def crawl_shop_products(
         self,
@@ -125,7 +130,6 @@ class ChanmamaCrawler:
         end_date: str,
         max_pages: int = 50
     ) -> List[Dict]:
-        """爬取单个店铺的商品数据"""
         brand = shop_info['brand']
         shop_id = shop_info['shop_id']
         shop_name = shop_info['shop_name']
@@ -154,7 +158,6 @@ class ChanmamaCrawler:
                     print(f"认证失败: cookie可能已过期，请重新获取")
                     break
                 
-                # code 为 0 或 None 都认为是成功
                 if resp_json.get('code') not in [0, None]:
                     print(f"API错误: {resp_json.get('msg')}")
                     break
@@ -170,6 +173,9 @@ class ChanmamaCrawler:
                     break
                 
                 for item in data_list:
+                    days_30_volume_trend = item.get('days_30_volume_trend', [])
+                    volume = self.get_volume_from_trend(days_30_volume_trend, start_date)
+                    
                     product = {
                         '竞品': brand,
                         '店铺ID': shop_id,
@@ -178,12 +184,20 @@ class ChanmamaCrawler:
                         '商品名称': item.get('title'),
                         '品牌': item.get('brand_name'),
                         '价格': item.get('sku_union_price_text'),
-                        '销量': item.get('volume'),
-                        '销售额': item.get('amount'),
-                        '佣金率': f"{item.get('max_commission_rate')}%",
-                        '关联达人': item.get('author_count'),
-                        '关联直播': item.get('live_count'),
-                        '关联视频': item.get('aweme_count'),
+                        '价格区间': item.get('price_text', ''),
+                        '销量': volume,
+                        '销量文本': item.get('volume_text', ''),
+                        '销售额': item.get('amount', 0),
+                        '销售额文本': item.get('amount_text', ''),
+                        '佣金率': f"{item.get('max_commission_rate', 0)}%",
+                        '关联达人': item.get('author_count', 0),
+                        '关联直播': item.get('live_count', 0),
+                        '关联视频': item.get('aweme_count', 0),
+                        '直播销量': item.get('live_volume', 0),
+                        '直播销售额': item.get('live_amount', 0),
+                        '视频销量': item.get('aweme_volume', 0),
+                        '视频销售额': item.get('aweme_amount', 0),
+                        '商品链接': f'https://www.chanmama.com/promotionDetail/{item.get("product_id")}',
                         '爬取日期': start_date,
                         '更新时间': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     }
@@ -208,7 +222,6 @@ class ChanmamaCrawler:
         end_date: str,
         shops: Optional[List[Dict]] = None
     ) -> List[Dict]:
-        """爬取所有店铺数据"""
         if not self.session:
             if not self.init_session():
                 return []
@@ -229,7 +242,6 @@ class ChanmamaCrawler:
         output_path: str,
         filename: Optional[str] = None
     ) -> str:
-        """保存数据到Excel"""
         if not data:
             print("没有数据可保存")
             return ""
@@ -257,7 +269,6 @@ def run_crawler(
     output_dir: str = "uploads",
     cookie: str = None
 ) -> Dict:
-    """运行爬虫主函数"""
     if not start_date:
         start_date = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
     if not end_date:
