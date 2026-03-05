@@ -2,6 +2,7 @@
 """
 蝉妈妈竞品数据爬虫 - 完整版
 从蝉妈妈平台爬取竞品销量数据，用于生成竞品日报
+支持存储到MySQL数据库和导出Excel
 """
 import requests
 import json
@@ -14,8 +15,27 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from Crypto.Cipher import AES
 from typing import List, Dict, Optional
+from dotenv import load_dotenv
 
-# 禁用代理
+try:
+    from sqlalchemy import create_engine, text
+    from sqlalchemy.exc import IntegrityError
+    MYSQL_AVAILABLE = True
+except ImportError:
+    MYSQL_AVAILABLE = False
+    print("警告: sqlalchemy未安装，MySQL存储功能不可用")
+
+load_dotenv()
+
+DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_PORT = os.getenv('DB_PORT', '3306')
+DB_USER = os.getenv('DB_USER', 'root')
+DB_PASSWORD = os.getenv('DB_PASSWORD', '123456')
+DB_NAME = os.getenv('DB_NAME', 'data_dive')
+DB_TABLE_ZHOUBO = os.getenv('DB_TABLE_ZHOUBO', 'zb_zhoubo')
+
+DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"
+
 os.environ['HTTP_PROXY'] = ''
 os.environ['HTTPS_PROXY'] = ''
 os.environ['http_proxy'] = ''
@@ -687,6 +707,116 @@ class ChanmamaCrawler:
         print(f"共 {len(df)} 条记录")
         
         return str(filepath)
+    
+    def save_to_mysql(self, data: List[Dict]) -> int:
+        if not data:
+            print("没有数据可保存到数据库")
+            return 0
+        
+        if not MYSQL_AVAILABLE:
+            print("MySQL存储功能不可用，跳过数据库存储")
+            return 0
+        
+        try:
+            engine = create_engine(DATABASE_URL)
+            
+            db_data = []
+            for item in data:
+                db_item = {
+                    '竞品': item.get('竞品', ''),
+                    'shop_id': item.get('店铺ID', ''),
+                    'quchong': item.get('去重键', ''),
+                    'shop_name': item.get('店铺名称', ''),
+                    'start_time': item.get('起始时间', ''),
+                    'end_time': item.get('结束时间', ''),
+                    'Catgeorys_name': item.get('分类', '全部'),
+                    'max_commission_rate': item.get('佣金率', ''),
+                    'product_id': item.get('商品ID', ''),
+                    'title': item.get('商品名称', ''),
+                    'brand_name': item.get('品牌', ''),
+                    'price': str(item.get('价格', '')) if item.get('价格') else '',
+                    'volume': str(item.get('销量', 0)),
+                    'amount': str(item.get('销售额', '')) if item.get('销售额') else '',
+                    'author_count': str(item.get('关联达人', 0)),
+                    'live_count': str(item.get('关联直播', 0)),
+                    'aweme_count': str(item.get('关联视频', 0)),
+                    'shangpin_url': item.get('商品链接', ''),
+                    'update_at': datetime.now(),
+                    'shangp_shop_id': item.get('商品店铺ID', ''),
+                    'shangp_shop_name': item.get('商品店铺名称', ''),
+                    'shangp_brand_name': item.get('商品品牌名称', ''),
+                }
+                db_data.append(db_item)
+            
+            df = pd.DataFrame(db_data)
+            
+            inserted_count = 0
+            with engine.connect() as conn:
+                for _, row in df.iterrows():
+                    try:
+                        insert_sql = text(f"""
+                            INSERT INTO {DB_TABLE_ZHOUBO} 
+                            (竞品, shop_id, quchong, shop_name, start_time, end_time, 
+                             Catgeorys_name, max_commission_rate, product_id, title, brand_name,
+                             price, volume, amount, author_count, live_count, aweme_count,
+                             shangpin_url, update_at, shangp_shop_id, shangp_shop_name, shangp_brand_name)
+                            VALUES 
+                            (:竞品, :shop_id, :quchong, :shop_name, :start_time, :end_time,
+                             :Catgeorys_name, :max_commission_rate, :product_id, :title, :brand_name,
+                             :price, :volume, :amount, :author_count, :live_count, :aweme_count,
+                             :shangpin_url, :update_at, :shangp_shop_id, :shangp_shop_name, :shangp_brand_name)
+                            ON DUPLICATE KEY UPDATE
+                            volume = VALUES(volume),
+                            price = VALUES(price),
+                            amount = VALUES(amount),
+                            update_at = VALUES(update_at)
+                        """)
+                        conn.execute(insert_sql, row.to_dict())
+                        conn.commit()
+                        inserted_count += 1
+                    except IntegrityError:
+                        pass
+                    except Exception as e:
+                        print(f"插入数据失败: {e}")
+            
+            print(f"成功存储 {inserted_count} 条数据到MySQL数据库")
+            return inserted_count
+            
+        except Exception as e:
+            print(f"数据库连接失败: {e}")
+            return 0
+    
+    def query_from_mysql(
+        self,
+        start_date: str,
+        end_date: str,
+        brands: Optional[List[str]] = None
+    ) -> List[Dict]:
+        if not MYSQL_AVAILABLE:
+            print("MySQL功能不可用")
+            return []
+        
+        try:
+            engine = create_engine(DATABASE_URL)
+            
+            query = f"""
+                SELECT * FROM {DB_TABLE_ZHOUBO}
+                WHERE start_time BETWEEN '{start_date}' AND '{end_date}'
+            """
+            
+            if brands:
+                brand_list = "','".join(brands)
+                query += f" AND 竞品 IN ('{brand_list}')"
+            
+            query += " ORDER BY start_time DESC, volume DESC"
+            
+            df = pd.read_sql(query, engine)
+            print(f"从数据库查询到 {len(df)} 条数据")
+            return df.to_dict('records')
+            
+        except Exception as e:
+            print(f"数据库查询失败: {e}")
+            return []
 
 
 def run_crawler(
@@ -694,7 +824,8 @@ def run_crawler(
     end_date: Optional[str] = None,
     output_dir: str = "uploads",
     cookie: str = None,
-    num_type: int = 2
+    num_type: int = 2,
+    save_to_db: bool = True
 ) -> Dict:
     if not start_date:
         start_date = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
@@ -712,19 +843,26 @@ def run_crawler(
             'message': '请先提供有效的cookie',
             'filepath': '',
             'count': 0,
-            'date': start_date
+            'date': start_date,
+            'db_count': 0
         }
     
     data = crawler.crawl_all_shops(start_date, end_date, num_type=num_type)
     
     if data:
         filepath = crawler.save_to_excel(data, output_dir)
+        
+        db_count = 0
+        if save_to_db:
+            db_count = crawler.save_to_mysql(data)
+        
         return {
             'success': True,
             'message': f'成功爬取 {len(data)} 条数据',
             'filepath': filepath,
             'count': len(data),
-            'date': start_date
+            'date': start_date,
+            'db_count': db_count
         }
     else:
         return {
@@ -732,7 +870,8 @@ def run_crawler(
             'message': '爬取失败，未获取到数据',
             'filepath': '',
             'count': 0,
-            'date': start_date
+            'date': start_date,
+            'db_count': 0
         }
 
 
