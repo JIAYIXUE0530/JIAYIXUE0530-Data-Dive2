@@ -6,7 +6,7 @@ async function testReportLoad() {
     
     // 测试1: 直接加载报告文件
     console.log('\n1. Testing direct report file load:');
-    const reportResponse = await fetch('http://localhost:5174/outputs/reports/report-2026-02-28-daily-dashboard.json');
+    const reportResponse = await fetch('http://localhost:5173/outputs/reports/report-2026-02-28-daily-dashboard.json');
     console.log('Report file response status:', reportResponse.status);
     
     if (reportResponse.ok) {
@@ -20,7 +20,7 @@ async function testReportLoad() {
     
     // 测试2: 加载报告索引文件
     console.log('\n2. Testing reports index file load:');
-    const indexResponse = await fetch('http://localhost:5174/outputs/reports/reports-index.json');
+    const indexResponse = await fetch('http://localhost:5173/outputs/reports/reports-index.json');
     console.log('Index file response status:', indexResponse.status);
     
     if (indexResponse.ok) {

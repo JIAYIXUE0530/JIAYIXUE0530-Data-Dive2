@@ -396,12 +396,73 @@ function ChartContainer({ type, data }) {
       })
     })
     
+    // 计算总计行
+    const calculateTotals = () => {
+      if (filteredData.length === 0) return null
+      
+      const totals = {}
+      
+      // 数值列（需要求和）
+      const numericColumns = ['昨日销量', '3日日均', '7日日均', '30日日均', 
+                              'T周', 'T-1周', 'T-2周', 'T-3周', 'T-4周',
+                              '当月', 'T-1月', 'T-2月', 'T-3月']
+      
+      // 占比列（总计为100%）
+      const ratioColumns = ['昨日销量占比', '3日日均占比', '7日日均占比', '30日日均占比']
+      
+      // 文本列（显示"-"或"总计"）
+      const textColumns = ['学段', '学科', '竞品', '商品名称', '价格']
+      
+      columns.forEach(col => {
+        if (textColumns.includes(col)) {
+          if (col === columns[0]) {
+            totals[col] = '总计'
+          } else {
+            totals[col] = '-'
+          }
+        } else if (ratioColumns.includes(col)) {
+          totals[col] = '100%'
+        } else if (numericColumns.includes(col)) {
+          const sum = filteredData.reduce((acc, row) => {
+            const val = row[col]
+            if (typeof val === 'number') return acc + val
+            return acc
+          }, 0)
+          totals[col] = Math.round(sum)  // 整数
+        } else {
+          totals[col] = '-'
+        }
+      })
+      
+      return totals
+    }
+    
+    const totalsRow = calculateTotals()
+    
     return (
       <div className="mt-6 pt-6 border-t border-[var(--border-subtle)]">
         {/* Filters */}
         {Object.keys(filters).length > 0 && (
           <div className="flex flex-wrap gap-4 mb-4">
-            {Object.entries(filters).map(([filterKey, options]) => (
+            {Object.entries(filters).map(([filterKey, options]) => {
+              // 自定义排序顺序
+              const getSortedOptions = (key, opts) => {
+                if (key === '学段') {
+                  const order = ['小学', '初中', '高中', '低幼']
+                  return order.filter(o => opts.includes(o))
+                }
+                if (key === '竞品') {
+                  const order = ['作业帮', '猿辅导', '高途', '希望学', '豆神', '叫叫']
+                  const ordered = order.filter(o => opts.includes(o))
+                  const others = opts.filter(o => !order.includes(o) && o !== 'IP').sort()
+                  const ip = opts.includes('IP') ? ['IP'] : []
+                  return [...ordered, ...others, ...ip]
+                }
+                return opts
+              }
+              const sortedOptions = getSortedOptions(filterKey, options)
+              
+              return (
               <div key={filterKey} className="flex items-center gap-2">
                 <label className="text-sm text-[var(--text-secondary)]">{filterKey}:</label>
                 <select
@@ -415,12 +476,12 @@ function ChartContainer({ type, data }) {
                   className="px-3 py-1.5 bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded-lg text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent-forest)]"
                 >
                   <option value="全部">全部</option>
-                  {options.map(option => (
+                  {sortedOptions.map(option => (
                     <option key={option} value={option}>{option}</option>
                   ))}
                 </select>
               </div>
-            ))}
+            )})}
           </div>
         )}
         
@@ -430,36 +491,49 @@ function ChartContainer({ type, data }) {
             <div className="max-h-[800px] overflow-y-auto">
               <table className="w-full text-sm border-collapse min-w-[1200px]">
                 <thead className="sticky top-0 z-10">
-                  {/* Header Groups (第一行) */}
+                  {/* Header Groups (第一行) - 明亮深蓝 */}
                   {header_groups && header_groups.length > 0 && (
-                    <tr className="border-b border-[var(--border-subtle)] bg-[var(--bg-tertiary)]">
+                    <tr className="border-b border-[var(--border-subtle)] bg-[#7ba3c9]">
                       {header_groups.map((group, index) => (
                         <th 
                           key={index} 
                           colSpan={group.colspan} 
-                          className="text-center py-3 px-3 font-semibold text-[var(--text-primary)] whitespace-nowrap border-r border-[var(--border-subtle)] last:border-r-0 bg-[var(--bg-tertiary)]"
+                          className="text-center py-3 px-3 font-semibold text-white whitespace-nowrap border-r border-white/20 last:border-r-0"
                         >
                           {group.title}
                         </th>
                       ))}
                     </tr>
                   )}
-                  {/* Column Headers (第二行) */}
-                  <tr className="border-b border-[var(--border-subtle)] bg-[var(--bg-card)]">
+                  {/* Column Headers (第二行) - 明亮中蓝 */}
+                  <tr className="border-b border-[var(--border-subtle)] bg-[#9ec5e8]">
                     {columns.map((column, index) => (
-                      <th key={index} className="text-left py-2 px-3 font-semibold text-[var(--text-primary)] whitespace-nowrap border-r border-[var(--border-subtle)] last:border-r-0 bg-[var(--bg-card)]">
+                      <th key={index} className="text-left py-2 px-3 font-semibold text-white whitespace-nowrap border-r border-white/20 last:border-r-0">
                         {column}
                       </th>
                     ))}
                   </tr>
+                  {/* 总计行 (第三行) - 明亮浅蓝，放入thead以冻结 */}
+                  {totalsRow && (
+                    <tr className="border-b-2 border-[#c8dff2] bg-[#d6e9f7]/90 font-semibold">
+                      {columns.map((column, colIndex) => (
+                        <th key={colIndex} className="py-2 px-3 text-[#4a7a9e] whitespace-nowrap border-r border-[var(--border-subtle)] last:border-r-0 font-semibold text-left">
+                          {totalsRow[column] !== null && totalsRow[column] !== undefined ? 
+                            (typeof totalsRow[column] === 'number' ? totalsRow[column].toLocaleString() : totalsRow[column]) 
+                            : '-'}
+                        </th>
+                      ))}
+                    </tr>
+                  )}
                 </thead>
                 <tbody>
+                  {/* 数据行 */}
                   {filteredData.map((row, rowIndex) => (
                     <tr key={rowIndex} className="border-b border-[var(--border-subtle)] hover:bg-[var(--bg-tertiary)]/30 transition-colors">
                       {columns.map((column, colIndex) => (
                         <td key={colIndex} className="py-2 px-3 text-[var(--text-secondary)] whitespace-nowrap border-r border-[var(--border-subtle)] last:border-r-0">
                           {row[column] !== null && row[column] !== undefined ? 
-                            (typeof row[column] === 'number' ? row[column].toLocaleString() : row[column]) 
+                            (typeof row[column] === 'number' ? Math.round(row[column]).toLocaleString() : row[column]) 
                             : '-'}
                         </td>
                       ))}

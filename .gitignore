@@ -1,0 +1,6 @@
+.DS_Store
+.claude/
+*.png
+*.jpg
+outputs/
+zhoubao.py

@@ -1,13 +1,25 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Dashboard from './pages/Dashboard'
+import Reports from './pages/Reports'
 import Report from './pages/Report'
+import DataEntry from './pages/DataEntry'
+import SalesData from './pages/SalesData'
+import CompetitorDatabase from './pages/CompetitorDatabase'
+import Crawler from './pages/Crawler'
+import DataTagging from './pages/DataTagging'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/reports" element={<Reports />} />
         <Route path="/report/:reportId" element={<Report />} />
+        <Route path="/crawler" element={<Crawler />} />
+        <Route path="/data-tagging" element={<DataTagging />} />
+        <Route path="/data-entry" element={<DataEntry />} />
+        <Route path="/sales-data" element={<SalesData />} />
+        <Route path="/competitor-database" element={<CompetitorDatabase />} />
       </Routes>
     </BrowserRouter>
   )
